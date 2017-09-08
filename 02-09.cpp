@@ -47,17 +47,11 @@ template <class T>
 bool LinkedList<T>::buscar(T a, Node<T>**& p){
 	Node<T>** t;
 	t = &(this->head);
-	//Node<T>** prev;
-	//prev = &(this->head);
-	//t = &(*t)->next;
-	//cout << "prev: " << prev << endl;
-	cout << "t: " << t << endl;
-	while((*t)->next != NULL && (*t)->val < a){
+	while((*t) != NULL && (*t)->val < a){
 		//prev = &(*prev)->next;
 		t = &(*t)->next;
-		cout << "t while: " << t << endl;
 	}
-	p = &(*t)->next;
+	p = t;
 	//cout << "nodo con valor " <<(*prev)->val << " previo apunta a " << (*t)->val << endl;
 	if ((*t) != NULL && (*t)->val == a) return true;
 	else return false;
@@ -66,10 +60,7 @@ bool LinkedList<T>::buscar(T a, Node<T>**& p){
 template <class T>
 void LinkedList<T>::insertar(T a){
 	Node<T> **p;
-	cout << "Insertando " << a << endl;
-	cout << "head: " << &head << endl;
 	bool busq = this->buscar(a, p);
-	cout << "p: " << p << endl;
 	if(!busq){
 		//Node<T> *value;
 		//value = new Node<T>(a, (*p));
@@ -80,13 +71,11 @@ void LinkedList<T>::insertar(T a){
 template <class T>
 void LinkedList<T>::imprimir(){
 	Node<T>* t = this->head;
-	//cout << t->val << " ";
 	while(t->next != NULL){
 		cout << t->val << " ";
 		t = t->next;
 	}
 	cout << t->val << endl;
-	//cout << t->val << " ";
 }
 
 
@@ -101,19 +90,18 @@ int main(int argc, char *argv[]) {
 	cout << *c << endl; //direccion de b->next 
 	cout << c << endl; //direccion del puntero al que apunta b->next (**)
 	cout << &(b->next) << endl; //direccion de memoria del puntero a b->next*/
-	LinkedList<long> A(1L);
+	LinkedList<long> A(3L);
 	A.imprimir();
-	//int a[] = {1, 2, 3, 4, 5};
-	//A.insertar(1L);
-	A.insertar(2L);
-	A.insertar(3L);
-	A.insertar(5L);
-	//A.insertar(4L);
-	//A.insertar(0L);
 	for(long i = 6; i < 16; i+=3){
 		A.insertar(i);
 	}
 	A.insertar(8L);
+	A.insertar(2L);
+	A.insertar(20L);
+	A.insertar(-1L);
+	A.insertar(20L);
+	//A.insertar(0L);
+	//A.insertar(6L);
 	A.imprimir();
 	return 0;
 }
