@@ -48,11 +48,9 @@ bool LinkedList<T>::buscar(T a, Node<T>**& p){
 	Node<T>** t;
 	t = &(this->head);
 	while((*t) != NULL && (*t)->val < a){
-		//prev = &(*prev)->next;
 		t = &(*t)->next;
 	}
 	p = t;
-	//cout << "nodo con valor " <<(*prev)->val << " previo apunta a " << (*t)->val << endl;
 	if ((*t) != NULL && (*t)->val == a) return true;
 	else return false;
 }
@@ -78,6 +76,19 @@ void LinkedList<T>::imprimir(){
 	cout << t->val << endl;
 }
 
+template <class T>
+void LinkedList<T>::borrar(T a){
+	Node<T> **p;
+	cout << "Borrando: " << a <<"\n";
+	bool busq = this->buscar(a, p);
+	if(busq){
+		Node<T>* temp = ((*p)->next);
+		delete *p;
+		*p = temp;
+	} else {
+		cout << "El valor " << a << " no existe en la lista.\n";
+	}
+}
 
 int main(int argc, char *argv[]) {
 	/*Node<int> *a = new Node<int>(5, NULL); 
@@ -91,7 +102,6 @@ int main(int argc, char *argv[]) {
 	cout << c << endl; //direccion del puntero al que apunta b->next (**)
 	cout << &(b->next) << endl; //direccion de memoria del puntero a b->next*/
 	LinkedList<long> A(3L);
-	A.imprimir();
 	for(long i = 6; i < 16; i+=3){
 		A.insertar(i);
 	}
@@ -102,6 +112,12 @@ int main(int argc, char *argv[]) {
 	A.insertar(20L);
 	//A.insertar(0L);
 	//A.insertar(6L);
+	A.imprimir();
+	A.borrar(8L);
+	A.imprimir();
+	A.borrar(-1L);
+	A.imprimir();
+	A.borrar(20L);
 	A.imprimir();
 	return 0;
 }
