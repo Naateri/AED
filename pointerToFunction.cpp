@@ -2,16 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+//unsigned long long int can store up to 19 digit numbers
+
 using namespace std;
 
 template <class T>
-T* generarArray(T *a, T *b, int size){
+T* generarArray(int size){
 	srand(time(NULL));
 	T* ret = new T[size];
-	a = ret;
-	for(; a<b; a++){
-		*a = T(rand()%1000000);
-		cout << "a: " << *a << endl;
+	T* a = ret;
+	for(int i = 0; i<size; a++, i++){
+		*a = T(rand());
 	}
 	return ret;
 }
@@ -26,11 +27,11 @@ void imprimir(T *a, T *b){
 }
 
 template <class T>
-void swap(T &p, T &q){
-	T temp;
-	temp = p;
-	p = q;
-	q = temp;
+void swap(T *p, T *q){
+	T* temp;
+	*temp = *p;
+	*p = *q;
+	*q = *temp;
 }
 
 template <class T>
@@ -52,26 +53,29 @@ void cocktail(T *a, T *fin, bool (*p) (T, T)){
 		compro = 0;
 		for(; a < fin; a++){
 			if(p(*a, *(a+1))){
-				swap(*a, *(a+1));
+				swap<T>(a, (a+1));
 				compro = 1;
 			}
 		}
 		for(; fin != aux; fin--){
 			if(!(p(*fin, *(fin-1)))){
-				swap(*fin, *(fin-1));
+				swap<T>(*fin, *(fin-1));
 				compro = 1;
 			}
 		}
-		swap(a,fin);
+		swap<T>(a,fin);
 		a++;
 		fin--;
 	}
 }
 
 int main(int argc, char *argv[]) {
-	long* array1000;
-	array1000 = generarArray(array1000, array1000+1000, 1000);
-	imprimir(array1000, array1000+1000);
+	int* array1000 = generarArray<int>(1000);
+	bool (*p) (int, int) = &menor<int>;
+	//p = menor<int>;
+	imprimir<int>(array1000, array1000+999);
+	cocktail<int>(array1000, array1000+999, p);
+	delete array1000;
 	return 0;
 }
 
