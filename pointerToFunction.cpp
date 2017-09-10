@@ -50,20 +50,25 @@ void cocktail(T *a, T *fin, bool (*p) (T, T)){
 	aux = a;
 	bool compro = 1;
 	while (compro){
+		cout << "bucleee\n";
 		compro = 0;
-		for(; a < fin; a++){
+		for(a; a < fin; a++){
+			cout << "fooooor1\n";
 			if(p(*a, *(a+1))){
-				swap<T>(a, (a+1));
+				cout << "swaaaaaaaaaap1\n";
+				swap<T>(*a, *(a+1));
 				compro = 1;
 			}
 		}
-		for(; fin != aux; fin--){
+		for(a; fin != aux; fin--){
+			cout << "foooor2\n";
 			if(!(p(*fin, *(fin-1)))){
 				swap<T>(*fin, *(fin-1));
 				compro = 1;
 			}
 		}
-		swap<T>(a,fin);
+		cout << "FUERA FORSSSS\n";
+		swap<T>(*a,*fin);
 		a++;
 		fin--;
 	}
