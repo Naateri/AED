@@ -24,6 +24,7 @@ private:
 	Node<T> *head;
 public:
 	LinkedList(T);
+	LinkedList();
 	void imprimir();
 	//bool buscar(T a); //si quiero insertar, tendré que buscar otra vez
 	//Node<T>* buscar(T a); //si no existe, retorno el nodo anterior para futura inserción
@@ -41,6 +42,11 @@ LinkedList<T>::LinkedList(T a){
 	Node<T> *first = new Node<T>(a, NULL);
 	this->head = first;
 	//this->head->next = NULL;
+}
+
+template <class T>
+LinkedList<T>::LinkedList(){
+	this->head = NULL;
 }
 
 template <class T>
@@ -101,7 +107,8 @@ int main(int argc, char *argv[]) {
 	cout << *c << endl; //direccion de b->next 
 	cout << c << endl; //direccion del puntero al que apunta b->next (**)
 	cout << &(b->next) << endl; //direccion de memoria del puntero a b->next*/
-	LinkedList<long> A(3L);
+	//LinkedList<long> A(3L);
+	LinkedList<long> A;
 	for(long i = 6; i < 16; i+=3){
 		A.insertar(i);
 	}
