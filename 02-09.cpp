@@ -54,7 +54,7 @@ bool LinkedList<T>::buscar(T a, Node<T>**& p){
 	Node<T>** t;
 	t = &(this->head);
 	while((*t) != NULL && (*t)->val < a){
-		t = &(*t)->next;
+		t = &((*t)->next);
 	}
 	p = t;
 	if ((*t) != NULL && (*t)->val == a) return true;
@@ -65,7 +65,7 @@ template <class T>
 void LinkedList<T>::insertar(T a){
 	Node<T> **p;
 	bool busq = this->buscar(a, p);
-	if(!busq){
+	if (!busq){
 		//Node<T> *value;
 		//value = new Node<T>(a, (*p));
 		*p = new Node<T>(a, *p);
@@ -117,7 +117,9 @@ int main(int argc, char *argv[]) {
 	A.insertar(20L);
 	A.insertar(-1L);
 	A.insertar(20L);
-	//A.insertar(0L);
+	//A.insertar(-123514L);
+	//A.insertar(12356244L);
+	A.insertar(0L);
 	//A.insertar(6L);
 	A.imprimir();
 	A.borrar(8L);

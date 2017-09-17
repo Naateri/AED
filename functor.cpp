@@ -7,12 +7,12 @@ using namespace std;
 
 class Mayor{
 public:
-	bool operator()(int a, int b){return (a>b);};
+	inline bool operator()(int a, int b){return (a>b);};
 };
 
 class Menor{
 public:
-	bool operator()(int a, int b){return a<b;};
+	inline bool operator()(int a, int b){return a<b;};
 };
 
 template <class T>
@@ -89,6 +89,58 @@ void a1000Elem(double &elapsedTime, ofstream &filexd){
 }
 
 template <class T, class O>
+void a5kElem(double &elapsedTime, ofstream &filexd){
+	T* array5k = generarArray<T>(5000);
+	clock_t begin = clock();
+	Sort<T, O> sorting;
+	sorting.cocktail(array5k, array5k+4999);
+	//imprimir<int>(array1000, array1000+999);
+	clock_t end = clock();
+	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
+	filexd << "Array 5 000 elementos: " << elapsedTime << endl;
+	delete array5k;
+}
+
+template <class T, class O>
+void a10kElem(double &elapsedTime, ofstream &filexd){
+	T* array10k = generarArray<T>(10000);
+	clock_t begin = clock();
+	Sort<T, O> sorting;
+	sorting.cocktail(array10k, array10k+9999);
+	//imprimir<int>(array1000, array1000+999);
+	clock_t end = clock();
+	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
+	filexd << "Array 10 000 elementos: " << elapsedTime << endl;
+	delete array10k;
+}
+
+template <class T, class O>
+void a25kElem(double &elapsedTime, ofstream &filexd){
+	T* array25k = generarArray<T>(25000);
+	clock_t begin = clock();
+	Sort<T, O> sorting;
+	sorting.cocktail(array25k, array25k+24999);
+	//imprimir<int>(array1000, array1000+999);
+	clock_t end = clock();
+	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
+	filexd << "Array 25 000 elementos: " << elapsedTime << endl;
+	delete array25k;
+}
+
+template <class T, class O>
+void a50kElem(double &elapsedTime, ofstream &filexd){
+	T* array50k = generarArray<T>(50000);
+	clock_t begin = clock();
+	Sort<T, O> sorting;
+	sorting.cocktail(array50k, array50k+49999);
+	//imprimir<int>(array1000, array1000+999);
+	clock_t end = clock();
+	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
+	filexd << "Array 50 000 elementos: " << elapsedTime << endl;
+	delete array50k;
+}
+
+template <class T, class O>
 void a100kElem(double &elapsedTime, ofstream &filexd){
 	T* array100k = generarArray<T>(100000);
 	clock_t begin = clock();
@@ -99,6 +151,32 @@ void a100kElem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 100 000 elementos: " << elapsedTime << endl;
 	delete array100k;
+}
+
+template <class T, class O>
+void a250kElem(double &elapsedTime, ofstream &filexd){
+	T* array250k = generarArray<T>(250000);
+	clock_t begin = clock();
+	Sort<T, O> sorting;
+	sorting.cocktail(array250k, array250k+249999);
+	//imprimir<int>(array1000, array1000+999);
+	clock_t end = clock();
+	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
+	filexd << "Array 250 000 elementos: " << elapsedTime << endl;
+	delete array250k;
+}
+
+template <class T, class O>
+void a500kElem(double &elapsedTime, ofstream &filexd){
+	T* array500k = generarArray<T>(500000);
+	clock_t begin = clock();
+	Sort<T, O> sorting;
+	sorting.cocktail(array500k, arra500k+499999);
+	//imprimir<int>(array1000, array1000+999);
+	clock_t end = clock();
+	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
+	filexd << "Array 500 000 elementos: " << elapsedTime << endl;
+	delete array500k;
 }
 
 template <class T, class O>
@@ -138,26 +216,58 @@ int main(int argc, char *argv[]) {
 	cout << "Acabo 1000\n";
 	file << "Promedio 1000: " << acum/100 << endl;
 	acum = 0;
+	
+	for(int i = 0; i < 50; i++){
+		a5kElem<int, Menor>(et, file);
+		acum += et;
+	}
+	cout << "Acabo 5000\n";
+	file << "Promedio 5000: " << acum/50 << endl;
+	acum = 0;
+	
+	for(int i = 0; i < 30; i++){
+		a10kElem<int, Menor>(et, file);
+		acum += et;
+	}
+	cout << "Acabo 10 000\n";
+	file << "Promedio 10 000: " << acum/30 << endl;
+	acum = 0;
+	
 	for(int i = 0; i < 25; i++){
+		a25kElem<int, Menor>(et, file);
+		acum += et;
+	}
+	cout << "Acabo 25 000\n";
+	file << "Promedio 25 000: " << acum/25 << endl;
+	acum = 0;
+	
+	for(int i = 0; i < 15; i++){
+		a50kElem<int, Menor>(et, file);
+		acum += et;
+	}
+	cout << "Acabo 50 000\n";
+	file << "Promedio 50 000: " << acum/15 << endl;
+	acum = 0;
+	
+	for(int i = 0; i < 10; i++){
 		a100kElem<int, Menor>(et, file);
 		acum += et;
 	}
 	cout << "Acabo 100 000\n";
 	file << "Promedio 100 000: " << acum/25 << endl;
 	acum = 0;
-	for(int i = 0; i < 10; i++){
+	
+	a250kElem<int, Menor>(et, file);
+	cout << "Acabo 250 000\n";
+	
+	a500kElem<int, Menor>(et, file);
+	cout << "Acabo 500 000\n";
+	//for(int i = 0; i < 10; i++){
 		a1MElem<int, Menor>(et, file);
-		acum += et;
-	}
+		//acum += et;
+	//}
 	cout << "Acabo 1 000 000\n";
-	file << "Promedio 1 000 000: " << acum/10 << endl;
-	acum = 0;
-	for (int i = 0; i < 5; i++){
-		a100MElem<int, Menor>(et, file);
-		acum += et;
-	}
-	cout << "Acabo 100 000 000\n";
-	file << "Promedio 100 000 000: " << acum/5 << endl;
+	//file << "Promedio 100 000 000: " << acum/5 << endl;
 	return 0;
 }
 
