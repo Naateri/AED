@@ -125,7 +125,7 @@ void a10kElem(double &elapsedTime, ofstream &filexd){
 	delete Csort;
 }
 
-template <class T, class O>
+template <class T>
 void a25kElem(double &elapsedTime, ofstream &filexd){
 	T* array25k = generarArray<T>(25000);
 	clock_t begin = clock();
@@ -139,7 +139,7 @@ void a25kElem(double &elapsedTime, ofstream &filexd){
 	delete Csort;
 }
 
-template <class T, class O>
+template <class T>
 void a50kElem(double &elapsedTime, ofstream &filexd){
 	T* array50k = generarArray<T>(50000);
 	clock_t begin = clock();
@@ -186,7 +186,7 @@ void a500kElem(double &elapsedTime, ofstream &filexd){
 	T* array500k = generarArray<T>(500000);
 	clock_t begin = clock();
 	Cocktail<T> *Csort = new MenorCock<T>;
-	Csort->sort(array500k, arra500k+499999);
+	Csort->sort(array500k, array500k+499999);
 	//imprimir<int>(array1000, array1000+999);
 	clock_t end = clock();
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;

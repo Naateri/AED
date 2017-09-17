@@ -171,7 +171,7 @@ void a500kElem(double &elapsedTime, ofstream &filexd){
 	T* array500k = generarArray<T>(500000);
 	clock_t begin = clock();
 	Sort<T, O> sorting;
-	sorting.cocktail(array500k, arra500k+499999);
+	sorting.cocktail(array500k, array500k+499999);
 	//imprimir<int>(array1000, array1000+999);
 	clock_t end = clock();
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
