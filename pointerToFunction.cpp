@@ -159,7 +159,7 @@ template <class T>
 void a500kElem(bool (*p) (T, T), double &elapsedTime, ofstream &filexd){
 	T* array500k = generarArray<T>(500000);
 	clock_t begin = clock();
-	cocktail<T>(array500k, array500k+499999);
+	cocktail<T>(array500k, array500k+499999, p);
 	//imprimir<int>(array1000, array1000+999);
 	clock_t end = clock();
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
@@ -196,7 +196,7 @@ int main(int argc, char *argv[]) {
 	ofstream file;
 	file.open("timesPtr2Func.txt");
 	for(int i = 0; i < 100; i++){
-		a1000Elem<int>(p, et file);
+		a1000Elem<int>(p, et, file);
 		acum += et;
 	}
 	cout << "Acabo 1000\n";
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
 		acum += et;
 	}
 	cout << "Acabo 100 000\n";
-	file << "Promedio 100 000: " << acum/25 << endl;
+	file << "Promedio 100 000: " << acum/10 << endl;
 	acum = 0;
 	
 	a250kElem<int>(p, et, file);

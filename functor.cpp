@@ -254,7 +254,7 @@ int main(int argc, char *argv[]) {
 		acum += et;
 	}
 	cout << "Acabo 100 000\n";
-	file << "Promedio 100 000: " << acum/25 << endl;
+	file << "Promedio 100 000: " << acum/10 << endl;
 	acum = 0;
 	
 	a250kElem<int, Menor>(et, file);
