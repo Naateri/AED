@@ -38,7 +38,7 @@ void swap(T *p, T *q){
 template <class T> class Cocktail{
 protected:
 	//virtual bool mayor(T, T) = 0;
-	virtual bool menor(T, T) = 0;
+	virtual bool cmp(T, T) = 0;
 public:
 	void sort(T *a, T *fin){
 		T *aux;
@@ -48,13 +48,13 @@ public:
 		while (compro){
 			compro = 0;
 			for(a; a < fin; a++){
-				if(menor(*a, *(a+1))){
+				if(cmp(*a, *(a+1))){
 					swap<T>(*a, *(a+1));
 					compro = 1;
 				}
 			}
 			for(a; fin != aux; fin--){
-				if(!(menor(*fin, *(fin-1)))){
+				if(!(cmp(*fin, *(fin-1)))){
 					swap<T>(*fin, *(fin-1));
 					compro = 1;
 				}
@@ -71,17 +71,18 @@ public:
 template <class T> 
 class MenorCock: public Cocktail<T>{
 public:
-	bool menor(T a, T b){
+	bool cmp(T a, T b){
 		return a < b;
 	}
 };
 
-/*template <class T> class MenorCock: public Cocktail<T>{
+template <class T>
+class MayorCock: public Cocktail<T>{
 public:
-	bool menor(T a, T b){
-		return a < b;
+	bool cmp(T a, T b){
+		return a > b;
 	}
-};*/
+};
 
 template <class T>
 void a1000Elem(double &elapsedTime, ofstream &filexd){
@@ -94,7 +95,7 @@ void a1000Elem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 1000 elementos: " << elapsedTime << endl;
 	delete array1000;
-	delete Csort;
+	//delete Csort;
 }
 
 template <class T>
@@ -108,7 +109,7 @@ void a5kElem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 5 000 elementos: " << elapsedTime << endl;
 	delete array5k;
-	delete Csort;
+	//delete Csort;
 }
 
 template <class T>
@@ -122,7 +123,7 @@ void a10kElem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 10 000 elementos: " << elapsedTime << endl;
 	delete array10k;
-	delete Csort;
+	//delete Csort;
 }
 
 template <class T>
@@ -136,7 +137,7 @@ void a25kElem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 25 000 elementos: " << elapsedTime << endl;
 	delete array25k;
-	delete Csort;
+	//delete Csort;
 }
 
 template <class T>
@@ -150,12 +151,13 @@ void a50kElem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 50 000 elementos: " << elapsedTime << endl;
 	delete array50k;
-	delete Csort;
+	//delete Csort;
 }
 
 template <class T>
 void a100kElem(double &elapsedTime, ofstream &filexd){
 	int* array100k = generarArray<int>(100000);
+	cout << sizeof(array100k) << endl;
 	clock_t begin = clock();
 	Cocktail<T> *Csort = new MenorCock<T>;
 	Csort->sort(array100k, array100k+99999);
@@ -164,7 +166,7 @@ void a100kElem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 100 000 elementos: " << elapsedTime << endl;
 	delete array100k;
-	delete Csort;
+	//delete Csort;
 }
 
 template <class T>
@@ -178,7 +180,7 @@ void a250kElem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 250 000 elementos: " << elapsedTime << endl;
 	delete array250k;
-	delete Csort;
+	//delete Csort;
 }
 
 template <class T>
@@ -191,7 +193,7 @@ void a500kElem(double &elapsedTime, ofstream &filexd){
 	clock_t end = clock();
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 500 000 elementos: " << elapsedTime << endl;
-	delete array500k;
+	//delete array500k;
 }
 
 template <class T>
@@ -205,7 +207,7 @@ void a1MElem(double &elapsedTime, ofstream &filexd){
 	elapsedTime = double(end-begin) / CLOCKS_PER_SEC;
 	filexd << "Array 1 000 000 elementos: " << elapsedTime << endl;
 	delete array1M;
-	delete Csort;
+	//delete Csort;
 }
 
 template <class T>
@@ -271,7 +273,7 @@ int main(int argc, char *argv[]) {
 		acum += et;
 	}
 	cout << "Acabo 100 000\n";
-	file << "Promedio 100 000: " << acum/25 << endl;
+	file << "Promedio 100 000: " << acum/10 << endl;
 	acum = 0;
 	
 	a250kElem<int>(et, file);
