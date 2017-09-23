@@ -35,7 +35,7 @@ template <class T>
 CircularLinkedList<T>::CircularLinkedList(){
 	this->head = NULL;
 	//CircularNode<T> lol = CircularNode<T>(0, head); 
-	//this->headPrev = lol;
+	//this->headPrev = lol;.
 }
 
 template <class T>
@@ -60,7 +60,7 @@ bool CircularLinkedList<T>::insertar(T x){
 	CircularNode<T> **p;
 	if(!buscar(x, p)){
 		*p = new CircularNode<T>(x, head);
-		headPrev = &(*p)->next;
+		headPrev = &(*p)/*->next*/;
 		return 1;
 	}
 	return 0;
@@ -72,9 +72,15 @@ bool CircularLinkedList<T>::borrar(T x){
 	cout << "Borrando: " << x << endl;
 	if(buscar(x, p)){
 		CircularNode<T>* temp = (*p)->next;
+		/*cout << "headPrev: " << *headPrev << endl;
+		cout << "Head: " << head << endl;*/
 		delete *p;
+		/*cout << "Borrado.\n";
+		cout << "Head: " << head << endl;*/
 		*p = temp;
 		(*headPrev) = head;
+		/*cout << "headPrev: " << headPrev << endl;
+		cout << "*headPrev: " << *headPrev << endl;*/
 		return 1;
 	}
 	return 0;
@@ -83,11 +89,11 @@ bool CircularLinkedList<T>::borrar(T x){
 template <class T>
 void CircularLinkedList<T>::imprimir(){
 	CircularNode<T>* t = head;
-	unsigned int aux = 0;
-	while ((t) && (t != this->head || aux == 0)){
+	bool aux = 1;
+	while ((t) && (t != this->head || aux)){
 		cout << (t)->val << " ";
 		t = (t)->next;
-		aux = 1;
+		aux = 0;
 	}
 	cout << endl;
 }
@@ -101,10 +107,14 @@ int main(int argc, char *argv[]) {
 	A.insertar(4);
 	A.insertar(8);
 	A.imprimir();
+	//A.borrar(5);
+	//A.imprimir();
 	A.borrar(8);
 	A.imprimir();
-	A.borrar(5);
-	A.imprimir();
+	//CircularNode<int> **B;
+	//if (A.buscar(5, B)) cout << "1\n";
+	/*A.borrar(5);
+	A.imprimir();*/
 	A.borrar(2);
 	A.imprimir();
 	A.insertar(69);
