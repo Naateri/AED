@@ -60,13 +60,6 @@ bool DLL<T>::add(T x){
 	(*p) = new DoubleNode<T>(x, *p);
 	(*p)->prev = *q;
 	*q = *p;
-	//(*p)->prev = *q;
-	if ( !((*p)->next) ){
-		tail = *p;
-	}
-	
-	/*if (p == &head) (*p)->prev = 0;
-	else */
 	return 1;
 }
 
@@ -74,30 +67,25 @@ template <class T>
 bool DLL<T>::remove(T x){
 	DoubleNode<T>** p, **q;
 	if (!find(x, p, q)) return 0;
-	DoubleNode<T>* temp = ((*p)->next);
-	if (!temp) tail = (*p)->prev;
+	cout << "Borrando " << x << ":\n";
+	DoubleNode<T>* temp = ((*p)->next), *tempPrev = ((*q)->prev);
 	delete *p;
 	*p = temp;
-	*q = temp->prev;
+	*q = tempPrev;
+	return 1;
 }
 
 template <class T>
 void DLL<T>::printByHead(){
 	DoubleNode<T>* h;// = head;
-	//cout << "Head: " << head << endl;
 	for(h = head; h; h = h->next)
 		cout << h->val << " ";
-	/*for(h = tail; h; h = h->prev)
-		cout << h->val << " ";*/
 	cout << endl;
 }
 
 template <class T>
 void DLL<T>::printByTail(){
 	DoubleNode<T>* h;// = head;
-	//cout << "Head: " << head << endl;
-	/*for(h = head; h; h = h->next)
-		cout << h->val << " ";*/
 	for(h = tail; h; h = h->prev)
 		cout << h->val << " ";
 	cout << endl;
