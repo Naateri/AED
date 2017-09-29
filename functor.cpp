@@ -5,11 +5,13 @@
 
 using namespace std;
 
+template <class T>
 class Mayor{
 public:
-	inline bool operator()(int a, int b){return (a>b);};
+	inline bool operator()(T a, T b){return (a>b);};
 };
 
+template <class T>
 class Menor{
 public:
 	inline bool operator()(int a, int b){return a<b;};
@@ -209,8 +211,8 @@ int main(int argc, char *argv[]) {
 	double et, acum = 0;
 	ofstream file;
 	file.open("timesFunctor.txt");
-	for(int i = 0; i < 100; i++){
-		a1000Elem<int, Menor>(et, file);
+	/*for(int i = 0; i < 100; i++){
+		a1000Elem<int, Menor<int> >(et, file);
 		acum += et;
 	}
 	cout << "Acabo 1000\n";
@@ -218,7 +220,7 @@ int main(int argc, char *argv[]) {
 	acum = 0;
 	
 	for(int i = 0; i < 50; i++){
-		a5kElem<int, Menor>(et, file);
+		a5kElem<int, Menor<int> >(et, file);
 		acum += et;
 	}
 	cout << "Acabo 5000\n";
@@ -226,7 +228,7 @@ int main(int argc, char *argv[]) {
 	acum = 0;
 	
 	for(int i = 0; i < 30; i++){
-		a10kElem<int, Menor>(et, file);
+		a10kElem<int, Menor<int> >(et, file);
 		acum += et;
 	}
 	cout << "Acabo 10 000\n";
@@ -234,7 +236,7 @@ int main(int argc, char *argv[]) {
 	acum = 0;
 	
 	for(int i = 0; i < 25; i++){
-		a25kElem<int, Menor>(et, file);
+		a25kElem<int, Menor<int> >(et, file);
 		acum += et;
 	}
 	cout << "Acabo 25 000\n";
@@ -242,28 +244,28 @@ int main(int argc, char *argv[]) {
 	acum = 0;
 	
 	for(int i = 0; i < 15; i++){
-		a50kElem<int, Menor>(et, file);
+		a50kElem<int, Menor<int> >(et, file);
 		acum += et;
 	}
 	cout << "Acabo 50 000\n";
 	file << "Promedio 50 000: " << acum/15 << endl;
 	acum = 0;
 	
-	for(int i = 0; i < 10; i++){
-		a100kElem<int, Menor>(et, file);
+	for(int i = 0; i < 5; i++){
+		a100kElem<int, Menor<int> >(et, file);
 		acum += et;
 	}
 	cout << "Acabo 100 000\n";
-	file << "Promedio 100 000: " << acum/10 << endl;
+	file << "Promedio 100 000: " << acum/5 << endl;
 	acum = 0;
 	
-	a250kElem<int, Menor>(et, file);
+	a250kElem<int, Menor<int> >(et, file);
 	cout << "Acabo 250 000\n";
-	
-	a500kElem<int, Menor>(et, file);
+	*/
+	a500kElem<int, Menor<int> >(et, file);
 	cout << "Acabo 500 000\n";
 	//for(int i = 0; i < 10; i++){
-		a1MElem<int, Menor>(et, file);
+		a1MElem<int, Menor<int> >(et, file);
 		//acum += et;
 	//}
 	cout << "Acabo 1 000 000\n";
