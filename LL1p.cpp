@@ -80,7 +80,7 @@ void LinkedList<T>::insertar(T a){
 			} else {
 				if (prev->val > a){
 					nod->next = prev;
-					head = nod;
+					//head = nod;
 				} else {
 					nod->next = prev->next;
 					prev->next = nod;
@@ -111,7 +111,6 @@ void LinkedList<T>::borrar(T a){
 			Node<T>* temp = head->next;
 			delete head;
 			head = temp;
-			
 		} else {
 			Node<T>* temp = (prev->next->next);
 			delete prev->next;
