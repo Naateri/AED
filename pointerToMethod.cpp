@@ -9,7 +9,7 @@ T* generarArray(unsigned long long size){
 	T* ret = new T[size];
 	T* a = ret;
 	for(int i = 0; i<size; a++, i++){
-		*a = T(rand()) % 1000000;
+		*a = T(rand()) % 100000;
 	}
 	return ret;
 }
@@ -86,6 +86,40 @@ public:
 		}
 	}
 };
+
+template <class T>
+class WorksToo{
+public:
+	bool menor(T a, T b){ return a<b; }
+	bool mayor(T a, T b){ return a>b; }
+	void Sort(T *a, T *fin, bool(WorksToo<T>::*theMethod)(T, T)){
+		T *aux;
+		aux = a;
+		bool compro = 1;
+		T *auxF = fin;
+		while (compro){
+			compro = 0;
+			for(a; a < fin; a++){
+				if((this->*theMethod)(*a, *(a+1))){
+					swap<T>(*a, *(a+1));
+					compro = 1;
+				}
+			}
+			for(a; fin != aux; fin--){
+				if(!(this->*theMethod)(*fin, *(fin-1))){
+					swap<T>(*fin, *(fin-1));
+					compro = 1;
+				}
+			}
+			swap<T>(*a,*fin);
+			aux++;
+			a = aux;
+			auxF--;
+			fin = auxF;
+		}
+	}
+};
+
 int main(int argc, char *argv[]) {
 	Methods<int> something;
 	CXSort<int> Lel;
@@ -98,6 +132,12 @@ int main(int argc, char *argv[]) {
 	imprimir<int>(a1, a1+10);
 	Lel.Sort(a1, a1+10, &something, &Methods<int>::mayor);
 	imprimir<int>(a1, a1+10);
+	int *b = generarArray<int>(100);
+	WorksToo<int> Xd;
+	cout << "Metodos dentro de la misma clase\n";
+	imprimir<int>(b, b+100);
+	Xd.Sort(b, b+100, &WorksToo<int>::menor);
+	imprimir<int>(b, b+100);
 	return 0;
 }
 
