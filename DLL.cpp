@@ -1,6 +1,7 @@
 //Ordered non-repeated values Double Linked List
 
 #include <iostream>
+#include <thread>
 using namespace std;
 
 template <class T>
@@ -28,10 +29,10 @@ DoubleNode<T>::DoubleNode(T x, DoubleNode<T>* nxt){
 
 template <class T>
 class DLL{
-private:
+public://private:
 	DoubleNode<T>* head;
 	DoubleNode<T>* tail;
-public:
+//public:
 	DLL();
 	bool find(T x, DoubleNode<T>**& p, DoubleNode<T>**& q);
 	bool add(T x);
@@ -47,9 +48,24 @@ DLL<T>::DLL(){
 }
 
 template <class T>
+void searchHead(DoubleNode<T>**& p, T x, DLL<T> *A){
+	for (p = &(A->head); (*p) && ((*p)->val < x); p = &(*p)->next);
+}
+
+template <class T>
+void searchTail(DoubleNode<T>**& q, T x, DLL<T> *A){
+	for (q = &(A->tail); (*q) && ((*q)->val > x); q = &(*q)->prev);
+}
+
+template <class T>
 bool DLL<T>::find(T x, DoubleNode<T>**& p, DoubleNode<T>**& q){
-	for (p = &head; (*p) && ((*p)->val < x); p = &(*p)->next);
-	for (q = &(tail); (*q) && ((*q)->val > x); q = &(*q)->prev);
+	DoubleNode<T>**& p1 = p;
+	thread t1(searchHead<T>, p, x, this);
+	thread t2(searchTail<T>, q, x, this);
+	/*for (p = &head; (*p) && ((*p)->val < x); p = &(*p)->next);
+	for (q = &(tail); (*q) && ((*q)->val > x); q = &(*q)->prev);*/
+	t1.join();
+	t2.join();
 	return (*p && (*p)->val == x);
 }
 
