@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <vector>
+#include <algorithm>
 
 //Wikipedia: graph from https://es.wikipedia.org/wiki/Anexo:Ejemplo_de_Algoritmo_de_Dijkstra
 
@@ -23,6 +24,12 @@ struct CNode{
 	typedef typename G::n N;
 	N m_data;
 	list<Edge*> m_edges; //TIL: STL list = Double Linked List
+};
+
+template <class T>
+struct Dist2Node{
+	CNode<T>* Node;
+	int distance;
 };
 
 template <class G>
@@ -48,7 +55,7 @@ public:
 	void removeEdge(Node* a, Node* b, E edge);
 	void removeNode(Node* a);
 	void draw();
-	uint Dijkstra(Node* start);
+	uint Dijkstra(Node* start, Node* goal);
 };
 
 template <class N, class E>
@@ -107,12 +114,36 @@ void CGraph<N, E>::draw(){
 }
 
 template <class N, class E>
-uint CGraph<N, E>::Dijkstra(Node* start){
-	;
+uint CGraph<N, E>::Dijkstra(Node* start, Node* goal){
+	vector<Dist2Node<int> > distances; //Arreglo de distancias a que nodo
+	bool seen[m_nodes.size()];
+	distances[0].distance = 0;
+	distances[0].Node = 0;
+	seen[0] = 1;
+	int i;
+	for(i = 1; i < m_nodes.size()-1; i++){
+		distances[i].distance = -1; //-1 = INFINITE
+		distances[i].Node = 0;
+		seen[i] = 0;
+	}
+	i = 1;
+	for(typename list<Edge*>::iterator it = start->m_edges.begin(); it != start->m_edges.end(); it++){ //recorrer aristas del nodo
+		if ( ! (*it)->m_dir){
+			if (start == (*it)->m_nodes[0]){  //guardamos las distancias
+				distances[i].Node = (*it)->m_nodes[1];
+			} else {
+				distances[i].Node = (*it)->m_nodes[0];
+			}
+			distances[i].distance = (*it)->m_data;
+		}
+		seen[i++] = 1;
+	}
+	i = 1;
+	
 }
 
 int main(int argc, char *argv[]) {
-	CGraph<char, int> g;
+	/*CGraph<char, int> g;
 	g.insertNode('A');
 	g.insertNode('B');
 	g.insertNode('C');
@@ -130,16 +161,16 @@ int main(int argc, char *argv[]) {
 	g.insertEdge(1, g.m_nodes[4], g.m_nodes[5], 0);
 	//g.removeEdge(g.m_nodes[0], g.m_nodes[2], 3);
 	g.removeNode(g.m_nodes[1]);
-	g.draw();
-	/*CGraph<char, int> Wikipedia;
-	Wikipedia.insertNode('a');
-	Wikipedia.insertNode('b');
-	Wikipedia.insertNode('c');
-	Wikipedia.insertNode('d');
-	Wikipedia.insertNode('e');
-	Wikipedia.insertNode('f');
-	Wikipedia.insertNode('g');
-	Wikipedia.insertNode('z');
+	g.draw();*/
+	CGraph<char, int> Wikipedia;
+	Wikipedia.insertNode('A');
+	Wikipedia.insertNode('B');
+	Wikipedia.insertNode('C');
+	Wikipedia.insertNode('D');
+	Wikipedia.insertNode('E');
+	Wikipedia.insertNode('F');
+	Wikipedia.insertNode('G');
+	Wikipedia.insertNode('Z');
 	Wikipedia.insertEdge(16, Wikipedia.m_nodes[0], Wikipedia.m_nodes[1], 0);
 	Wikipedia.insertEdge(10, Wikipedia.m_nodes[0], Wikipedia.m_nodes[2], 0);
 	Wikipedia.insertEdge(5, Wikipedia.m_nodes[0], Wikipedia.m_nodes[3], 0);
@@ -155,7 +186,7 @@ int main(int argc, char *argv[]) {
 	Wikipedia.insertEdge(8, Wikipedia.m_nodes[5], Wikipedia.m_nodes[6], 0);
 	Wikipedia.insertEdge(16, Wikipedia.m_nodes[5], Wikipedia.m_nodes[7], 0);
 	Wikipedia.insertEdge(7, Wikipedia.m_nodes[6], Wikipedia.m_nodes[7], 0);
-	*/
+	Wikipedia.draw();
 	return 0;
 }
 
