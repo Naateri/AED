@@ -4,6 +4,8 @@
 
 using namespace std;
 
+typedef unsigned int uint;
+
 template <class G>
 struct CNode{
 	typedef typename G::Edge Edge;
@@ -35,6 +37,7 @@ public:
 	void removeEdge(Node* a, Node* b, E edge);
 	void removeNode(Node* a);
 	void draw();
+	uint Dijkstra(Node* start);
 };
 
 template <class N, class E>
@@ -68,7 +71,12 @@ void CGraph<N, E>::removeEdge(Node *a, Node *b, E edge){ //ni idea de porque no 
 
 template <class N, class E>
 void CGraph<N, E>::removeNode(Node* a){
-	for(typename list<Edge*>::iterator it = a->m_edges.begin(); it != a->m_edges.end(); ++it){
+	typename list<Edge*>::iterator temp;
+	//for(typename list<Edge*>::iterator it = a->m_edges.begin(); it != a->m_edges.end(); ++it){
+	typename list<Edge*>::iterator it = a->m_edges.begin();
+	while(it != a->m_edges.end() ){
+		cout << "Amount of edges: " << a->m_edges.size() << endl;
+		temp = it;
 		/*cout << "Iteracion\n";
 		removeEdge((*it)->m_nodes[0], (*it)->m_nodes[1], (*it)->m_data);
 		cout << "Funca el for\n";*/
@@ -78,9 +86,9 @@ void CGraph<N, E>::removeNode(Node* a){
 		cout << (*it)->m_nodes[0]->m_data;
 		cout << (*it)->m_nodes[1]->m_data;
 		cout << endl;
-		removeEdge((*it)->m_nodes[0], (*it)->m_nodes[1], (*it)->m_data);
+		removeEdge((*temp)->m_nodes[0], (*temp)->m_nodes[1], (*temp)->m_data);
+		it++;
 	}
-	cout << "aaaaaaaaa\n";
 	delete a;
 }
 
@@ -94,6 +102,11 @@ void CGraph<N, E>::draw(){
 		} //mejorar esta parte si se puede
 		cout << endl;
 	}
+}
+
+template <class N, class E>
+uint CGraph<N, E>::Dijkstra(Node* start){
+	;
 }
 
 int main(int argc, char *argv[]) {
@@ -113,9 +126,34 @@ int main(int argc, char *argv[]) {
 	g.insertEdge(3, g.m_nodes[3], g.m_nodes[4], 1);
 	g.insertEdge(7, g.m_nodes[3], g.m_nodes[5], 1);
 	g.insertEdge(1, g.m_nodes[4], g.m_nodes[5], 0);
-	//g.removeEdge(g.m_nodes[2], g.m_nodes[4], 5);
+	//g.removeEdge(g.m_nodes[0], g.m_nodes[2], 3);
 	g.removeNode(g.m_nodes[1]);
 	g.draw();
+	/*CGraph<char, int> Wikipedia;
+	Wikipedia.insertNode('a');
+	Wikipedia.insertNode('b');
+	Wikipedia.insertNode('c');
+	Wikipedia.insertNode('d');
+	Wikipedia.insertNode('e');
+	Wikipedia.insertNode('f');
+	Wikipedia.insertNode('g');
+	Wikipedia.insertNode('z');
+	Wikipedia.insertEdge(16, Wikipedia.m_nodes[0], Wikipedia.m_nodes[1], 0);
+	Wikipedia.insertEdge(10, Wikipedia.m_nodes[0], Wikipedia.m_nodes[2], 0);
+	Wikipedia.insertEdge(5, Wikipedia.m_nodes[0], Wikipedia.m_nodes[3], 0);
+	Wikipedia.insertEdge(2, Wikipedia.m_nodes[1], Wikipedia.m_nodes[2], 0);
+	Wikipedia.insertEdge(4, Wikipedia.m_nodes[1], Wikipedia.m_nodes[5], 0);
+	Wikipedia.insertEdge(6, Wikipedia.m_nodes[1], Wikipedia.m_nodes[6], 0);
+	Wikipedia.insertEdge(4, Wikipedia.m_nodes[2], Wikipedia.m_nodes[3], 0);
+	Wikipedia.insertEdge(10, Wikipedia.m_nodes[2], Wikipedia.m_nodes[4], 0);
+	Wikipedia.insertEdge(12, Wikipedia.m_nodes[2], Wikipedia.m_nodes[5], 0);
+	Wikipedia.insertEdge(15, Wikipedia.m_nodes[3], Wikipedia.m_nodes[4], 0);
+	Wikipedia.insertEdge(3, Wikipedia.m_nodes[4], Wikipedia.m_nodes[5], 0);
+	Wikipedia.insertEdge(5, Wikipedia.m_nodes[4], Wikipedia.m_nodes[7], 0);
+	Wikipedia.insertEdge(8, Wikipedia.m_nodes[5], Wikipedia.m_nodes[6], 0);
+	Wikipedia.insertEdge(16, Wikipedia.m_nodes[5], Wikipedia.m_nodes[7], 0);
+	Wikipedia.insertEdge(7, Wikipedia.m_nodes[6], Wikipedia.m_nodes[7], 0);
+	*/
 	return 0;
 }
 
