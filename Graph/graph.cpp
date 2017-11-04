@@ -2,9 +2,20 @@
 #include <list>
 #include <vector>
 
+//Wikipedia: graph from https://es.wikipedia.org/wiki/Anexo:Ejemplo_de_Algoritmo_de_Dijkstra
+
 using namespace std;
 
 typedef unsigned int uint;
+
+template <class T>
+uint findInVector(vector<T> vec, T elem){
+	uint i = 0;
+	while(vec.at(i) != elem){
+		i++;
+	}
+	return i;
+}
 
 template <class G>
 struct CNode{
@@ -74,22 +85,13 @@ void CGraph<N, E>::removeNode(Node* a){
 	typename list<Edge*>::iterator temp;
 	//for(typename list<Edge*>::iterator it = a->m_edges.begin(); it != a->m_edges.end(); ++it){
 	typename list<Edge*>::iterator it = a->m_edges.begin();
-	while(it != a->m_edges.end() ){
-		cout << "Amount of edges: " << a->m_edges.size() << endl;
-		temp = it;
-		/*cout << "Iteracion\n";
-		removeEdge((*it)->m_nodes[0], (*it)->m_nodes[1], (*it)->m_data);
-		cout << "Funca el for\n";*/
-		cout << "Iteracion\n";
-		//(*it)->m_nodes[0]->m_edges.erase(it);
-		//(*it)->m_nodes[1]->m_edges.erase(it);
-		cout << (*it)->m_nodes[0]->m_data;
-		cout << (*it)->m_nodes[1]->m_data;
-		cout << endl;
+	while(it != a->m_edges.end()){
+		temp = it++;
 		removeEdge((*temp)->m_nodes[0], (*temp)->m_nodes[1], (*temp)->m_data);
-		it++;
 	}
 	delete a;
+	m_nodes.erase(m_nodes.begin() + findInVector<Node*>(m_nodes, a) );
+	
 }
 
 template <class N, class E>
