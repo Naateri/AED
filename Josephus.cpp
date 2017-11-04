@@ -1,6 +1,8 @@
 #include <iostream>
 using namespace std;
 
+typedef unsigned int uint;
+
 template <class T>
 struct CNode{
 	CNode<T>* next;
@@ -16,12 +18,17 @@ template <class T>
 class DList{
 	CNode<T>* head;
 	CNode<T>* tail;
+	uint size = 0;
 public:
+	/*uint size(){
+		return size;
+	}*/
 	DList();
 	bool find(T x, CNode<T>*& p);
 	bool insert(T x);
 	bool remove(T x);
 	void print();
+	void Josephus(int soldiers, int gap);
 };
 
 template <class T>
@@ -72,18 +79,33 @@ bool DList<T>::insert(T x){
 			p->prev = newNode;
 		}
 	}
+	size++;
 	return 1;
 }
 
 template <class T>
 bool DList<T>::remove(T x){
+	if (head == head->next){ //only 1 element left
+		delete head;
+		head = tail = 0;
+		return 0;
+	}
 	CNode<T>* p;
 	if(!find(x,p)) return 0;
-	p = (p)->next;
-	if(head->m_x == x){
-		head = head->next;
+	if (p == head){
+		head = (p)->next;
+		head->prev = tail;
+		tail->next = head;
+	} else if (p == tail){
+		tail = (p)->prev;
+		tail->next = head;
+		head->prev = tail;
+	} else {
+		(p)->prev->next = (p)->next;
+		(p)->next->prev = (p)->prev;
 	}
 	delete p;
+	size--;
 	return 1;
 }
 
@@ -99,22 +121,39 @@ void DList<T>::print(){
 	}
 }
 
+template <class T>
+void DList<T>::Josephus(int soldiers, int gap){
+	for(int i = 0; i < soldiers; i++){
+		insert(i);
+	}
+	CNode<int>* temp = head;
+	int tmp;
+	while(size > 2){
+		for(int i = 0; i < gap-1; i++){
+			temp = temp->next;
+		}
+		tmp = temp->m_x;
+		temp = temp->next; //para no perder los enlaces
+		cout << "Muere: " << tmp << endl; 
+		remove(tmp);
+	}
+	cout << "Sobreviven: ";
+	print();
+}
+
 int main(int argc, char *argv[]) {
 	DList<int> A;
-	A.insert(1);
+	/*A.insert(1);
 	A.insert(3);
-	A.print();
 	A.insert(5);
-	A.print();
 	A.insert(7);
-	A.print();
 	A.insert(6);
-	A.print();
 	A.insert(2);
-	//A.remove(7);
-	A.print();
 	A.insert(0);
-	A.print();
+	A.remove(5);
+	A.print();*/
+	DList<int> Josephus;
+	Josephus.Josephus(100, 69);
 	return 0;
 }
 
