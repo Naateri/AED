@@ -16,6 +16,13 @@ struct Path{
 	bool done = 0;
 };
 
+bool allNodesChecked(Path* p, uint size){
+	for(uint i = 0; i < size; i++){
+		if ( ! (p+i)->done ) return 0;
+	}
+	return 1;
+}
+
 bool findSameLetter(string a, string b){
 	int shortest;
 	if (a.size() > b.size()) shortest = b.size();
@@ -75,7 +82,7 @@ public:
 	uint Dijkstra(Node* start, Node* goal); //DISCLAIMER: Este para nada es el mejor Dijkstra y tiene (al menos) 69*10^(69) mejoras posibles de hecho
 private:
 	uint findByValue(N val);
-	void Dijks(Node* node, Path*& p);
+	void Dijks(Node*& node, Path* p);
 };
 
 template <class N, class E>
@@ -106,7 +113,7 @@ void CGraph<N, E>::insertEdge(E edge, Node* a, Node* b, bool dir){
 }
 
 template <class N, class E>
-void CGraph<N, E>::removeEdge(Node *a, Node *b, E edge){ //ni idea de porque no funciona con C->2B
+void CGraph<N, E>::removeEdge(Node *a, Node *b, E edge){ 
 	typename list<Edge*>::iterator it = a->m_edges.begin();
 	for( ; it != a->m_edges.end() && (*it)->m_data != edge && (*it)->m_nodes[1] != b; ++it);
 	a->m_edges.erase(it);
@@ -143,12 +150,12 @@ void CGraph<N, E>::draw(){
 }
 
 template <class N, class E>
-void CGraph<N, E>::Dijks(Node* node, Path*& p){
-	cout << "Dijks de: " << node->m_data << endl;
+void CGraph<N, E>::Dijks(Node*& node, Path* p){
 	Path* ptr;
 	Node* minNode;
 	string newpath;
 	uint min = 999999, prevLen;
+	if (allNodesChecked(p, m_nodes.size())) return;
 	for(typename list<Edge*>::iterator it = node->m_edges.begin(); it != node->m_edges.end(); it++){
 		if (p[findInVector(m_nodes, (*it)->m_nodes[node == (*it)->m_nodes[0]])].done) continue;
 		if ((*it)->m_dir){ //arista direccional
@@ -156,41 +163,33 @@ void CGraph<N, E>::Dijks(Node* node, Path*& p){
 			ptr = &p[findInVector(m_nodes, (*it)->m_nodes[1])];
 			newpath = ptr->path + (*it)->m_nodes[1]->m_data;
 			prevLen = p[findInVector(m_nodes, node)].length; 
-			if (ptr->done || findSameLetter(newpath, ptr->path) || (ptr->length && 
-			ptr->length < prevLen + (*it)->m_data) ) continue;
-			ptr->path = newpath;
-			ptr->length = prevLen + (*it)->m_data;
+			if (ptr->done) continue;
+			//ptr->path = newpath;
+			if ( !ptr->length || ptr->length > prevLen + (*it)->m_data){
+				ptr->length = prevLen + (*it)->m_data;
+				ptr->path = newpath;
+			}
 		} else { //arista bidireccional
 			if (node == (*it)->m_nodes[0]){
-				cout << "FIND IN VECTOR: " << findInVector(m_nodes, (*it)->m_nodes[1]) << endl;
 				ptr = &p[findInVector(m_nodes, (*it)->m_nodes[1])];
 				newpath = ptr->path + (*it)->m_nodes[1]->m_data;
-				/*prevLen = p[findInVector(m_nodes, node)].length; 
-				if (ptr->done || findSameLetter(newpath, ptr->path) || (ptr->length && 
-									ptr->length < prevLen + (*it)->m_data) ) continue;
-				ptr->path = newpath;
-				ptr->length = prevLen + (*it)->m_data;*/
 			} else {
-				cout << "elsey\n";
-				cout << "FIND IN VECTOR: " << findInVector(m_nodes, (*it)->m_nodes[0]) << endl;
 				ptr = &p[findInVector(m_nodes, (*it)->m_nodes[0])];
 				newpath = p[findInVector(m_nodes, node)].path + (*it)->m_nodes[0]->m_data;
 			}
 			prevLen = p[findInVector(m_nodes, node)].length; 
-			if (ptr->done || findSameLetter(newpath, ptr->path) || (ptr->length && 
-																	ptr->length < prevLen + (*it)->m_data) ) continue;
-			ptr->path = newpath;
-			ptr->length = prevLen + (*it)->m_data;
+			if (ptr->done) continue;
+			//ptr->path = newpath;
+			if ( !ptr->length || ptr->length > prevLen + (*it)->m_data){
+				ptr->length = prevLen + (*it)->m_data;
+				ptr->path = newpath;
+			}
 		}
 		if ( (*it)->m_data < min){
-			if (node == (*it)->m_nodes[0]){
-				cout << "New min: " << (*it)->m_nodes[1]->m_data << endl;
-				//min = (*it)->m_data;
+			if (node == (*it)->m_nodes[0])
 				minNode = (*it)->m_nodes[1];
-			} else {
-				cout << "New min: " << (*it)->m_nodes[0]->m_data << endl;
+			else
 				minNode = (*it)->m_nodes[0];
-			}
 			min = (*it)->m_data;
 		}
 	}
@@ -200,57 +199,23 @@ void CGraph<N, E>::Dijks(Node* node, Path*& p){
 	int xd;
 	cin >> xd;
 	p[findInVector(m_nodes, minNode)].done = 1;
-	Dijks(minNode, p);
+	node = minNode;
 	return;
 }
 
 template <class N, class E>
 uint CGraph<N, E>::Dijkstra(Node* start, Node* goal){
-	/*vector<Dist2Node<int> > distances; //Arreglo de distancias a que nodo
-	bool seen[m_nodes.size()]; //Para saber si ya paso 
-	Dist2Node<int> s;
-	s.distance = -1; //-1 = infinite
-	s.Node = 0;
-	for (int i = 0; i < m_nodes.size(); i++){
-		distances.push_back(s);
-		seen[i] = 0;
-	}
-	distances[findInVector<Node*>(m_nodes, start)].distance = 0;
-	distances[findInVector<Node*>(m_nodes, start)].Node = start;
-	seen[findInVector<Node*>(m_nodes, start)] = 1;
-	//Todo lo de arriba: Llenando los valores iniciales
-	int mini = 0, index;
-	Node* cur, *minDist;
-	for(int i = 0; i < m_nodes.size() - 1; i++){
-		mini = -1; //inicializa un nuevo minimo
-		for(typename list<Edge*>::iterator it = cur->m_edges.begin(); it != cur->m_edges.end(); it++){ //recorrer aristas del nodo
-			//pregunta si ya vio ese nodo ///REVISAR ESE OR
-			if ( seen[findInVector<Node*>(m_nodes, (*it)->m_nodes[1])] || seen[findInVector<Node*>(m_nodes, (*it)->m_nodes[1])] ) continue;
-			if (cur == (*it)->m_nodes[0]){  //guardamos las distancias
-				if (distances[findInVector<Node*>(m_nodes, (*it)->m_nodes[1])].distance == -1){ //si nadie ha pasado por ahi
-					distances[findInVector<Node*>(m_nodes, (*it)->m_nodes[1])].Node = (*it)->m_nodes[0];
-					distances[findInVector<Node*>(m_nodes, (*it)->m_nodes[1])].distance = (*it)->m_data;
-				} else {
-					//distances[findInVector<Node*>(m_nodes, (*it)->m_nodes[0])].Node = (*it)->m_nodes[1];
-					distances[findInVector<Node*>(m_nodes, (*it)->m_nodes[0])].distance 
-						= min( (*it)->m_data, distance[findInVector<Node*>(m_nodes, cur)] );
-				}
-			if ( (*it)->m_data < mini || mini == -1) {
-				mini = (*it)->m_data;
-				minDist = *it;
-			}
-			}
-		}
-		seen[findInVector<Node*>(m_nodes, minDist)] = 1;
-	}*/	
 	Path* paths = new Path[m_nodes.size()];
 	paths[findInVector(m_nodes, start)].done = 1;
 	paths[findInVector(m_nodes, start)].path += start->m_data;
-	Dijks(start, paths);
+	for(uint i = 0; i < m_nodes.size(); i++){
+		Dijks(start, paths);
+		if (start == goal) break;
+	}
 	uint res = paths[findInVector(m_nodes, goal)].length;
-	delete paths;
+	cout << "Camino: " << paths[findInVector(m_nodes, goal)].path << endl;
+	delete[] paths;
 	return res;
-	
 }
 
 int main(int argc, char *argv[]) {
@@ -298,7 +263,7 @@ int main(int argc, char *argv[]) {
 	Wikipedia.insertEdge(16, Wikipedia.m_nodes[5], Wikipedia.m_nodes[7], 0);
 	Wikipedia.insertEdge(7, Wikipedia.m_nodes[6], Wikipedia.m_nodes[7], 0);
 	Wikipedia.draw();
-	Wikipedia.Dijkstra(Wikipedia.m_nodes[0], Wikipedia.m_nodes[7]);
+	cout << Wikipedia.Dijkstra(Wikipedia.m_nodes[0], Wikipedia.m_nodes[7]);
 	return 0;
 }
 
