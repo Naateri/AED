@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
 	Wikipedia.insertEdge(7, Wikipedia.m_nodes[6], Wikipedia.m_nodes[7], 0);
 	Wikipedia.draw();
 	cout << Wikipedia.Dijkstra(Wikipedia.m_nodes[7], Wikipedia.m_nodes[0]) << endl;*/
-	CGraph<char, uint> Test1;
+	/*CGraph<char, uint> Test1;
 	Test1.insertNode('A');
 	Test1.insertNode('B');
 	Test1.insertNode('C');
@@ -306,7 +306,25 @@ int main(int argc, char *argv[]) {
 	Test1.insertEdge(8, Test1.m_nodes[9], Test1.m_nodes[6], 1);
 	Test1.insertEdge(3, Test1.m_nodes[9], Test1.m_nodes[7], 1);
 	Test1.draw();
-	cout << Test1.Dijkstra(Test1.m_nodes[4], Test1.m_nodes[2]);
+	cout << Test1.Dijkstra(Test1.m_nodes[0], Test1.m_nodes[9]);*/
+	/*CGraph<char, uint> h;
+	h.insertNode('1');
+	h.insertNode('2');
+	h.insertNode('3');
+	h.insertNode('4');
+	h.insertNode('5');
+	h.insertNode('6');
+	h.insertEdge(14, h.m_nodes[0], h.m_nodes[5], 0);
+	h.insertEdge(7, h.m_nodes[0], h.m_nodes[1], 0);
+	h.insertEdge(9, h.m_nodes[0], h.m_nodes[2], 0);
+	h.insertEdge(10, h.m_nodes[1], h.m_nodes[2], 0);
+	h.insertEdge(15, h.m_nodes[1], h.m_nodes[3], 0);
+	h.insertEdge(11, h.m_nodes[2], h.m_nodes[3], 0);
+	h.insertEdge(2, h.m_nodes[2], h.m_nodes[5], 0);
+	h.insertEdge(6, h.m_nodes[3], h.m_nodes[4], 0);
+	h.insertEdge(9, h.m_nodes[4], h.m_nodes[5], 0);
+	h.draw();
+	cout << h.Dijkstra(h.m_nodes[0], h.m_nodes[4]);*/
 	return 0;
 }
 
