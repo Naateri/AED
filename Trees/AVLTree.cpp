@@ -91,14 +91,25 @@ bool AVL<T,C>::findHeightN2(CNode<T>**& p){
 template <class T, class C>
 void AVL<T,C>::RR(CNode<T>** p){
 	typename list<CNode<T>*>::iterator it = path.end();
-	while ( (*it) != (*p) ){
+	while ( (*it) != (*p)->m_nodes[1] ){
 		it--;
 	}
+	CNode<T>* temp;
+	if (*it != m_root){
+		temp = *(--it);
+		it++;
+	}
+	//it++;
 	CNode<T>* gfather = *(it++);
-	CNode<T>* father = *it, *bl = father->m_nodes[0];
+	CNode<T>* father = *(it), *bl = father->m_nodes[0];
+	cout << "father: " << father->m_x << endl;
+	cout << "bl: " << bl << endl;
 	father->m_nodes[0] = gfather;
 	gfather->m_nodes[1] = bl;
 	if (m_root == gfather) m_root = father;
+	else {
+		temp->m_nodes[1] = father;
+	}
 }
 
 template <class T, class C>
@@ -107,12 +118,8 @@ void AVL<T,C>::LL(CNode<T>** p){
 	while ( (*it) != (*p) ){
 		it--;
 	}
-	//it--;
-	CNode<T>* father = *(it--);
-	cout << "Father val: " << father->m_x << endl;
-	int d;
-	cin >> d;
-	CNode<T>* gfather = *it, *br = father->m_nodes[1];
+	CNode<T>* gfather = *(it++);
+	CNode<T>* father = *it, *br = father->m_nodes[1];
 	father->m_nodes[1] = gfather;
 	gfather->m_nodes[0] = br;
 	if (m_root == gfather) m_root = father;
@@ -166,7 +173,7 @@ bool AVL<T,C>::insert(T x){
 	//if ((*p) != m_root) (*p)->height = (path.back())->height + 1;
 	updateHeights();
 	/*for(typename list< CNode<T>* >::iterator it = path.begin(); it != path.end(); it++){
-		//cout << getHeight(*it) << ' ';
+	//cout << getHeight(*it) << ' ';
 	}*/
 	//path.push_back(*p);
 	findHeight(p, h);
@@ -177,12 +184,14 @@ bool AVL<T,C>::insert(T x){
 	case -2:
 		LL(p);
 		break; 
+	default:
+		cout << "No hay nada\n";
 	}
 	/*if (findHeight2(p)){
-		RR(p);
+	RR(p);
 	}
 	if (findHeightN2(p)){
-		LL(p);
+	LL(p);
 	}*/
 	updateHeights();
 	path.clear();
@@ -216,13 +225,17 @@ int main(int argc, char *argv[]) {
 	AVL<int, Menor <int> > Tree;
 	Tree.insert(5);
 	Tree.insert(7);
+	Tree.insert(4);
 	//Tree.insert(4);
 	Tree.insert(8);
+	Tree.printTree(Tree.m_root);
+	cout << endl;
+	Tree.insert(9);
 	//Tree.insert(3);
 	//Tree.inorder(Tree.m_root);
 	Tree.printTree(Tree.m_root);
 	cout << endl;
-	cout << Tree.getHeight(Tree.m_root);
+	//cout << Tree.getHeight(Tree.m_root);
 	return 0;
 }
 
