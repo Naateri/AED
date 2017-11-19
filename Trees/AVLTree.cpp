@@ -65,11 +65,13 @@ bool AVL<T,C>::findHeight(CNode<T>**& p, short& h){
 	for(typename list<CNode<T>*>::reverse_iterator it = path.rbegin(); it != path.rend(); it++){
 		if ((*it)->height == 2){
 			p = &(*it);
-			h = 2;
+			if ( (*it)->m_nodes[1]->height == -1) h = 3;
+			else h = 2;
 			return 1;
 		} else if ((*it)->height == -2){
 			p = &(*it);
-			h = -2;
+			if ( (*it)->m_nodes[0]->height == 1) h = -3;
+			else h = -2;
 			return 1;
 		}
 	}
@@ -79,46 +81,74 @@ bool AVL<T,C>::findHeight(CNode<T>**& p, short& h){
 template <class T, class C>
 void AVL<T,C>::RR(CNode<T>** p){
 	typename list<CNode<T>*>::iterator it = path.end();
+	bool LR = 0, RL = 0;
+	if ( !(*--it)->m_nodes[0] && (*--it)->m_nodes[0]) LR = 1;
+	//it++;
 	while ( (*it) != (*p) ){
 		it--;
 	}
-	CNode<T>* temp;
+	CNode<T>* temp, *father;
 	if (*it != m_root){ //si es que se tiene que balancear
 		temp = *(--it); //fuera de la raiz
 		it++; //regresando a la posicion
 	}
 	CNode<T>* gfather = *(it++);
-	CNode<T>* father = *(it);
+	if (LR && !(*it)->m_nodes[1]) father = *(++it);
+	else father = *(it);
+	if (father && !father->m_nodes[0] && !father->m_nodes[1] ) RL = 1;
 	CNode<T> *bl = father->m_nodes[0];
 	father->m_nodes[0] = gfather;
 	gfather->m_nodes[1] = bl;
 	if (m_root == gfather) m_root = father;
 	else {
-		temp->m_nodes[1] = father;
+		if (RL){
+			temp->m_nodes[0] = father;
+		}
+		else temp->m_nodes[1] = father;
 	}
 }
 
 template <class T, class C>
 void AVL<T,C>::LL(CNode<T>** p){
+	bool LR = 0, RL = 0;
 	typename list<CNode<T>*>::iterator it = path.end();
+	if ( !(*--it)->m_nodes[1] && (*--it)->m_nodes[1] ) RL = 1;
 	while ( (*it) != (*p)){
 		it--;
 	}
-	CNode<T>* temp;
+	CNode<T>* temp, *father;
 	if (*it != m_root){ //si es que se tiene que balancear
 		temp = *(--it); //fuera de la raiz
 		it++; //regresando a la posicion
 	}
 	CNode<T>* gfather = *(it++);
-	CNode<T>* father = *it, *br = father->m_nodes[1];
+	if(RL) father = *(++it);
+	else father = *(it);
+	CNode<T> *br = father->m_nodes[1];
+	if ( !father->m_nodes[0] && !father->m_nodes[1] ) LR = 1;
 	father->m_nodes[1] = gfather;
 	gfather->m_nodes[0] = br;
 	if (m_root == gfather){
 		m_root = father;
 	}
 	else {
-		temp->m_nodes[0] = father;
+		if (LR) {
+			temp->m_nodes[1] = father;
+		}
+		else temp->m_nodes[0] = father;
 	}
+}
+
+template <class T, class C>
+void AVL<T,C>::LR(CNode<T>** p){
+	LL( &(*p)->m_nodes[1]);
+	RR(p);
+}
+
+template <class T, class C>
+void AVL<T,C>::RL(CNode<T>** p){
+	RR( &(*p)->m_nodes[0]);
+	LL(p);
 }
 
 template <class T, class C>
@@ -132,7 +162,9 @@ short AVL<T,C>::getHeight(CNode<T>* p){
 	short left, right;
 	CNode<T> *temp = p;
 	for(left = 0;  temp && (temp)->m_nodes[0]; temp = (temp)->m_nodes[0], left++);
+	if (temp->m_nodes[1] && temp != p) left++;
 	for(right = 0, temp = p; temp && (temp)->m_nodes[1]; temp = temp->m_nodes[1], right++);
+	if (temp->m_nodes[0] && temp != p) right++;
 	return right - left;
 }
 
@@ -176,6 +208,12 @@ bool AVL<T,C>::insert(T x){
 	case -2:
 		LL(p);
 		break; 
+	case 3:
+		LR(p);
+		break;
+	case -3:
+		RL(p);
+		break;
 	default:
 		Switch = 0;
 		break;
@@ -212,12 +250,11 @@ int main(int argc, char *argv[]) {
 	AVL<int, Menor <int> > Tree;
 	int xd;
 	Tree.insert(5);
-	//Tree.insert(4);
 	Tree.insert(7);
 	Tree.insert(9);
-	/*Tree.printTree(Tree.m_root);
-	cout << endl;*/
-	Tree.insert(3);
+	Tree.printTree(Tree.m_root);
+	cout << endl;
+	/*Tree.insert(3);
 	Tree.printTree(Tree.m_root);
 	cin >> xd;
 	Tree.insert(2);
@@ -232,7 +269,17 @@ int main(int argc, char *argv[]) {
 	cout << endl;
 	Tree.insert(11);
 	Tree.insert(14);
-	Tree.printTree(Tree.m_root);
+	Tree.insert(15);
+	Tree.insert(17);
+	Tree.insert(0);*/
+	/*Tree.insert(5); //LR Base Test
+	Tree.insert(9);
+	Tree.insert(7);*/
+	/*Tree.insert(6); //RL Base Test
+	Tree.insert(3);
+	Tree.insert(5);*/
+	//Tree.printTree(Tree.m_root);
+	//cout << Tree.m_root->m_nodes[1]->height;
 	//cout << Tree.getHeight(Tree.m_root);
 	return 0;
 }
