@@ -3,6 +3,8 @@
 using namespace std;
 
 typedef unsigned int uint;
+typedef unsigned short ushort;
+
 
 //1, 8, 3, 7, 2, 9, 4, 5, 6
 
@@ -41,7 +43,6 @@ public:
 	void printTree(CNode<T>* p);
 private:
 	bool findHeight(CNode<T>**& p, short& h);
-	bool findHeightN2(CNode<T>**& p);
 	void updateHeights();
 	list< CNode<T>* > path;
 	void RR(CNode<T>** p);
@@ -82,7 +83,8 @@ template <class T, class C>
 void AVL<T,C>::RR(CNode<T>** p){
 	typename list<CNode<T>*>::iterator it = path.end();
 	bool LR = 0, RL = 0;
-	if ( !(*--it)->m_nodes[0] && (*--it)->m_nodes[0]) LR = 1;
+	if ( (*p)->m_nodes[1] && (*p)->m_nodes[1]->m_nodes[1] && (*p)->m_nodes[1]->m_nodes[1]->height == -1) LR = 1;
+	else if ( (*p)->height  == 1) RL = 1;
 	//it++;
 	while ( (*it) != (*p) ){
 		it--;
@@ -95,7 +97,7 @@ void AVL<T,C>::RR(CNode<T>** p){
 	CNode<T>* gfather = *(it++);
 	if (LR && !(*it)->m_nodes[1]) father = *(++it);
 	else father = *(it);
-	if (father && !father->m_nodes[0] && !father->m_nodes[1] ) RL = 1;
+	//if (!father->m_nodes[0] && !father->m_nodes[1] ) RL = 1;
 	CNode<T> *bl = father->m_nodes[0];
 	father->m_nodes[0] = gfather;
 	gfather->m_nodes[1] = bl;
@@ -112,7 +114,8 @@ template <class T, class C>
 void AVL<T,C>::LL(CNode<T>** p){
 	bool LR = 0, RL = 0;
 	typename list<CNode<T>*>::iterator it = path.end();
-	if ( !(*--it)->m_nodes[1] && (*--it)->m_nodes[1] ) RL = 1;
+	if ((*p)->m_nodes[0] && (*p)->m_nodes[0]->m_nodes[0] && (*p)->m_nodes[0]->m_nodes[0]->height == 1 ) RL = 1;
+	else if ( (*p)->height == -1) LR = 1;
 	while ( (*it) != (*p)){
 		it--;
 	}
@@ -125,7 +128,7 @@ void AVL<T,C>::LL(CNode<T>** p){
 	if(RL) father = *(++it);
 	else father = *(it);
 	CNode<T> *br = father->m_nodes[1];
-	if ( !father->m_nodes[0] && !father->m_nodes[1] ) LR = 1;
+	//if ( !father->m_nodes[0] && !father->m_nodes[1] ) LR = 1;
 	father->m_nodes[1] = gfather;
 	gfather->m_nodes[0] = br;
 	if (m_root == gfather){
@@ -249,12 +252,12 @@ void AVL<T,C>::inorder(CNode<T>* p){
 int main(int argc, char *argv[]) {
 	AVL<int, Menor <int> > Tree;
 	int xd;
-	Tree.insert(5);
+	/*Tree.insert(5);
 	Tree.insert(7);
 	Tree.insert(9);
 	Tree.printTree(Tree.m_root);
 	cout << endl;
-	/*Tree.insert(3);
+	Tree.insert(3);
 	Tree.printTree(Tree.m_root);
 	cin >> xd;
 	Tree.insert(2);
@@ -268,19 +271,38 @@ int main(int argc, char *argv[]) {
 	cin >> xd;
 	cout << endl;
 	Tree.insert(11);
+	Tree.printTree(Tree.m_root);
+	cin >> xd;
+	cout << endl;
 	Tree.insert(14);
+	Tree.printTree(Tree.m_root);
+	cin >> xd;
+	cout << endl;
 	Tree.insert(15);
+	Tree.printTree(Tree.m_root);
+	cin >> xd;
+	cout << endl;
 	Tree.insert(17);
-	Tree.insert(0);*/
+	Tree.insert(0);
+	Tree.printTree(Tree.m_root);
+	cin >> xd;
+	cout << endl;
+	Tree.insert(6);*/
 	/*Tree.insert(5); //LR Base Test
 	Tree.insert(9);
 	Tree.insert(7);*/
 	/*Tree.insert(6); //RL Base Test
 	Tree.insert(3);
 	Tree.insert(5);*/
-	//Tree.printTree(Tree.m_root);
-	//cout << Tree.m_root->m_nodes[1]->height;
-	//cout << Tree.getHeight(Tree.m_root);
+	Tree.insert(1);
+	Tree.insert(8);
+	Tree.insert(3);
+	Tree.insert(7);
+	Tree.insert(2);
+	Tree.insert(9);
+	Tree.insert(4);
+	Tree.insert(5);
+	Tree.printTree(Tree.m_root);
 	return 0;
 }
 
