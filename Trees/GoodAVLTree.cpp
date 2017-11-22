@@ -1,5 +1,6 @@
 #include <iostream>
 #include <list>
+#include <algorithm>
 using namespace std;
 
 typedef unsigned int uint;
@@ -20,6 +21,14 @@ struct CNode{
 		depth = 0;
 	}
 };
+
+template <class T>
+void printList(list<CNode<T>* > xd){
+	for(typename list<CNode<T>* >::iterator it = xd.begin(); it != xd.end(); it++){
+		cout << (*it)->m_x << ' ';
+	}
+	cout << endl;
+}
 
 template <class T>
 struct Menor{
@@ -43,8 +52,10 @@ public:
 	short getHeight(CNode<T>* p);
 	void printTree(CNode<T>* p);
 private:
+	bool findInPath(CNode<T>* p);
 	bool findHeight(CNode<T>**& p, short& h);
-	void updateDepth(short &h);
+	void updateDepth();
+	void updateDepthR();
 	void updateHeights(T x);
 	list< CNode<T>* > path;
 	short posInList(T val);
@@ -53,6 +64,14 @@ private:
 	void LR(CNode<T>** p);
 	void RL(CNode<T>** p);
 };
+
+template <class T, class C>
+bool AVL<T,C>::findInPath(CNode<T>* p){
+	for (typename list<CNode<T>* >::iterator it = path.begin(); it != path.end(); it++){
+		if ( *it == p ) return 1;
+	}
+	return 0;
+}
 
 template <class T, class C>
 short AVL<T,C>::posInList(T val){
@@ -97,7 +116,6 @@ void AVL<T,C>::RR(CNode<T>** p){
 	bool LR = 0, RL = 0;
 	if ( (*p)->m_nodes[1] && (*p)->m_nodes[1]->m_nodes[1] && (*p)->m_nodes[1]->m_nodes[1]->height == -1) LR = 1;
 	if ( (*p)->height  == 1) {RL = 1; LR = 0;}
-	//it++;
 	while ( (*it) != (*p) ){
 		it--;
 	}
@@ -108,9 +126,8 @@ void AVL<T,C>::RR(CNode<T>** p){
 	}
 	//CNode<T>* gfather = *(it++);
 	CNode<T>* gfather = *it;
-	/*if (LR) father = *(++it);
-	else father = *(it);*/
 	father = (*it)->m_nodes[1];
+	if (!findInPath(father) ) path.push_back(father);
 	//if (!father->m_nodes[0] && !father->m_nodes[1] ) RL = 1;
 	CNode<T> *bl = father->m_nodes[0];
 	father->m_nodes[0] = gfather;
@@ -122,16 +139,6 @@ void AVL<T,C>::RR(CNode<T>** p){
 		} else if (LR && father->height == 1) temp->m_nodes[0] = father;
 		else temp->m_nodes[1] = father;
 	}
-	if (!LR && !RL){
-		gfather->depth -= 2;
-	}
-	if (LR){
-		gfather->depth -= 2;
-		father->depth++;
-		father->m_nodes[1]->depth--;
-	}
-	if (RL)
-		cout << "Father val RR part of RL: " << father->m_x << endl;
 }
 
 template <class T, class C>
@@ -149,10 +156,9 @@ void AVL<T,C>::LL(CNode<T>** p){
 		it++; //regresando a la posicion
 	}
 	CNode<T>* gfather = *(it);
-	/*if(RL) father = *(++it);
-	else father = *(it);*/
 	father = (*it)->m_nodes[0];
 	CNode<T> *br = father->m_nodes[1];
+	if (!findInPath(father) ) path.push_back(father);
 	//if ( !father->m_nodes[0] && !father->m_nodes[1] ) LR = 1;
 	father->m_nodes[1] = gfather;
 	gfather->m_nodes[0] = br;
@@ -166,24 +172,11 @@ void AVL<T,C>::LL(CNode<T>** p){
 		else if (RL && father->height == -1) temp->m_nodes[1] = father;
 		else temp->m_nodes[0] = father;
 	}
-	if (!LR && !RL){
-		gfather->depth -= 2;
-	}
-	if (RL){
-		cout << "Father val: " << father->m_x << endl;
-		cout << "GFather val: " << gfather->m_x << endl;
-		cout << "gfather depth: " << gfather->depth << endl;
-		int x; cin >> x;
-		father->depth++;
-		gfather->depth -= 2;
-		cout << "new gfather depth: " << gfather->depth << endl;
-		cin >> x;
-		father->m_nodes[1]->depth -= 1;
-	}
 }
 
 template <class T, class C>
 void AVL<T,C>::LR(CNode<T>** p){
+	if (!findInPath( (*p)->m_nodes[1] ) ) path.push_back((*p)->m_nodes[1]);
 	LL( &(*p)->m_nodes[1]);
 	RR(p);
 	
@@ -191,6 +184,7 @@ void AVL<T,C>::LR(CNode<T>** p){
 
 template <class T, class C>
 void AVL<T,C>::RL(CNode<T>** p){
+	if (!findInPath( (*p)->m_nodes[0] ) ) path.push_back((*p)->m_nodes[0]);
 	RR( &(*p)->m_nodes[0]);
 	LL(p);
 }
@@ -200,6 +194,7 @@ CNode<T>** AVL<T,C>::Rep(CNode<T>** p){
 	for(p = &(*p)->m_nodes[0]; *p && (*p)->m_nodes[1]; p = &(*p)->m_nodes[1]){
 		path.push_back(*p);
 	}
+	path.push_back(*p);
 	return p;
 }
 
@@ -224,42 +219,71 @@ void AVL<T,C>::updateHeights(T x){
 }
 
 template <class T, class C>
-void AVL<T,C>::updateDepth(short& h){
+void AVL<T,C>::updateDepth(){
 	CNode<T>** p;
 	bool balance = 0;
+	ushort lDepth, rDepth;
 	typename list<CNode<T>* >::reverse_iterator rit = path.rbegin();
-	rit++;
+	/*cout << "LIST:\n";
+	printList<T>(path);*/
 	while(rit != path.rend() ){
-		(*rit)->depth = (*--rit)->depth + 1;
-		rit++;
-		if ( (*rit)->m_x == 7 ) cout << "Depth of 7 is: " << (*rit)->depth << endl;
+		if ( !(*rit)->m_nodes[0] && !(*rit)->m_nodes[1] ){
+			(*rit)->depth = 0;
+			rit++;
+			continue;
+		}
+		if ( (*rit)->m_nodes[0] ) lDepth = (*rit)->m_nodes[0]->depth;
+		else lDepth = 0;
+		if ( (*rit)->m_nodes[1] ) rDepth = (*rit)->m_nodes[1]->depth;
+		else rDepth = 0;
+		(*rit)->depth = max(lDepth, rDepth) + 1;
 		(*rit)->height = getHeight(*rit);
-		/*cout << "Height of: " << (*rit)->m_x << " : " << (*rit)->height << endl;
-		cin >> h;*/
 		if ((*rit)->height == 2){
 			p = &(*rit);
 			balance = 1;
 			if ( (*rit)->m_nodes[1]->height == -1){
-				/*h = 3;*/ LR(p);
+				LR(p);
 			}
 			else{
-				/*h = 2*/RR(p);
+				RR(p);
 			}
 		} else if ((*rit)->height == -2){
 			p = &(*rit);
 			balance = 1;
 			if ( (*rit)->m_nodes[0]->height == 1){
-				cout << "P is: " << (*p)->m_x << endl;
-				/*h = -3*/ RL(p);
+				RL(p);
 			}
 			else{
-				/*h = -2*/ LL(p);
+				LL(p);
 			}
 		}
-		if (balance) break;
+		if (balance){
+			break;
+		}
 		rit++;
 	}
 }
+
+template <class T, class C>
+void AVL<T,C>::updateDepthR(){
+	ushort lDepth, rDepth;
+	typename list<CNode<T>* >::iterator it = path.begin();
+	while(it != path.end() ){
+		if ( !(*it)->m_nodes[0] && !(*it)->m_nodes[1] ){
+			(*it)->depth = 0;
+			it++;
+			continue;
+		}
+		if ( (*it)->m_nodes[0] ) lDepth = (*it)->m_nodes[0]->depth;
+		else lDepth = 0;
+		if ( (*it)->m_nodes[1] ) rDepth = (*it)->m_nodes[1]->depth;
+		else rDepth = 0;
+		(*it)->depth = max(lDepth, rDepth) + 1;
+		(*it)->height = getHeight(*it);
+		it++;
+	}
+}
+
 
 template <class T, class C>
 AVL<T,C>::AVL(){
@@ -277,43 +301,15 @@ bool AVL<T,C>::find(T x, CNode<T>**& p){
 template <class T, class C>
 bool AVL<T,C>::insert(T x){
 	CNode<T>** p;
-	short h = 0;
-	bool Switch = 1;
 	if(find(x, p)){
 		path.clear();
 		return 0;
 	}
-	//(*p)->depth ++ 1;
 	*p = new CNode<T>(x);
 	path.push_back(*p);
+	updateDepth();
 	//printTree(m_root);
-	updateDepth(h);
-	/*cout << "Depths:\n";
-	for(typename list<CNode<T>* >::iterator it = path.begin(); it != path.end(); it++){
-		cout << "Cur val: " << (*it)->m_x << ", depth: " << (*it)->depth << endl;
-		cin >> h;
-	}*/
-	/*updateHeights(x);
-	findHeight(p, h);
-	switch(h){
-	case 2:
-		RR(p);
-		break;
-	case -2:
-		LL(p);
-		break; 
-	case 3:
-		LR(p);
-		break;
-	case -3:
-		RL(p);
-		break;
-	default:
-		Switch = 0;
-		break;
-	}*/
-	//if (Switch) updateHeights(x);
-	//updateDepth(h);
+	updateDepthR();
 	path.clear();
 	return 1;
 }
@@ -321,8 +317,6 @@ bool AVL<T,C>::insert(T x){
 template<class T, class C>
 bool AVL<T,C>::remove(T x){
 	CNode<T>** p;
-	short h = 0;
-	bool Switch = 0;
 	if(!(find(x,p))){
 		path.clear();
 		return 0;
@@ -334,28 +328,12 @@ bool AVL<T,C>::remove(T x){
 		p = q;
 	}
 	CNode<T>* temp = *p;
-	p = &(*p)->m_nodes[(*p)->m_nodes[1]!=0];
+	*p = (*p)->m_nodes[(*p)->m_nodes[1]!=0];
 	delete temp;
-	updateHeights(x);
-	findHeight(p, h);
-	switch(h){
-	case 2:
-		RR(p);
-		break;
-	case -2:
-		LL(p);
-		break; 
-	case 3:
-		LR(p);
-		break;
-	case -3:
-		RL(p);
-		break;
-	default:
-		Switch = 0;
-		break;
-	}
-	path.clear();
+	path.pop_back();
+	updateDepth();
+	updateDepthR(); //this is needed when we do a balance after erasing
+	path.clear(); //because a balanced node may not be a part of the path
 	return 1;
 }
 
@@ -370,8 +348,8 @@ void AVL<T,C>::inorder(CNode<T>* p){
 int main(int argc, char *argv[]) {
 	AVL<int, Menor <int> > Tree;
 	int xd;
-	/*Tree.insert(5);
-	Tree.insert(7);
+	Tree.insert(5); //Hasta remove 21 es un caso
+	Tree.insert(7); //Que funciona
 	Tree.insert(9);
 	Tree.printTree(Tree.m_root);
 	cout << endl;
@@ -383,8 +361,6 @@ int main(int argc, char *argv[]) {
 	cout << endl;
 	cin >> xd;
 	Tree.insert(1);
-	//Tree.insert(1);
-	//Tree.inorder(Tree.m_root);
 	Tree.printTree(Tree.m_root);
 	cin >> xd;
 	cout << endl;
@@ -408,7 +384,7 @@ int main(int argc, char *argv[]) {
 	Tree.printTree(Tree.m_root);
 	cin >> xd;
 	cout << endl;
-	Tree.insert(6); //BREAKPOINT
+	Tree.insert(6);
 	Tree.insert(8);
 	Tree.insert(19);
 	Tree.insert(21);
@@ -416,7 +392,10 @@ int main(int argc, char *argv[]) {
 	Tree.insert(22);
 	Tree.insert(69);
 	Tree.insert(72);
-	Tree.printTree(Tree.m_root);*/
+	Tree.remove(19);
+	Tree.remove(15);
+	Tree.remove(21);
+	Tree.printTree(Tree.m_root); //tested at https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
 	/*Tree.insert(4); //RR base test
 	Tree.insert(5);
 	Tree.insert(6);*/
@@ -429,26 +408,30 @@ int main(int argc, char *argv[]) {
 	/*Tree.insert(6); //RL Base Test
 	Tree.insert(3);
 	Tree.insert(5);*/
-	Tree.insert(1); //ARBOL PRUEBA GUSTAVO
+	/*Tree.insert(1); //ARBOL PRUEBA GUSTAVO
 	Tree.insert(8);
 	Tree.insert(3);
 	Tree.insert(7);
 	Tree.insert(2);
 	Tree.insert(9);
-	cout << "insertando 4:\n";
-	cin >> xd;
 	Tree.insert(4);
-	Tree.printTree(Tree.m_root);
-	cout << "insertando 5:\n";
-	cin >> xd;
 	Tree.insert(5);
-	Tree.printTree(Tree.m_root);
-	cout << "insertando 6: \n";
-	cin >> xd;
 	Tree.insert(6);
-	Tree.printTree(Tree.m_root);
-	cout << "6 insertado\n";
+	Tree.remove(3);
+	Tree.remove(8);
+	Tree.printTree(Tree.m_root); //hasta aqui funciona*/
 	//cin >> xd;
+	/*Tree.insert(8); //Esto funca
+	Tree.insert(9);
+	Tree.insert(10);
+	Tree.insert(15);
+	Tree.insert(2);
+	Tree.insert(1);
+	Tree.insert(17);
+	Tree.remove(2);
+	Tree.remove(5);
+	Tree.remove(10);
+	Tree.remove(8);*/
 	//Tree.printTree(Tree.m_root);
 	return 0;
 }
