@@ -17,6 +17,32 @@ struct CNode{
 	}
 };
 
+
+template <class T, T nl>
+class CSMatrix;	
+
+template <class T, T nl>
+class CCosa{
+	uint x,y;
+	CSMatrix<T, nl>* m;
+public:
+	CCosa(CSMatrix<T, nl>* mat, uint x, uint y){
+		this->m = mat;
+		this->x = x;
+		this->y = y;
+	}
+	void operator=(T val);
+	operator T(){
+		return m->get(x, y);
+	}
+};
+
+template <class T, T nl>
+void CCosa<T, nl>::operator=(T val){
+	m->set(val, x, y);
+	return;
+}
+
 template <class T, T nl>
 class CSMatrix{
 private:
@@ -32,13 +58,22 @@ private:
 	void eraseRight(uint x, uint y);
 public:
 	CSMatrix(uint m, uint n);
+	uint get_cols(){return col;}
+	uint get_rows(){return rows;}
 	void print();
 	void insert(T val, uint x, uint y);
 	void modify(T val, uint x, uint y);
 	void erase(uint x, uint y);
 	T get(uint x, uint y);
 	void set(T val, uint x, uint y);
+	CCosa<T, nl> operator()(uint x, uint y);
 };
+
+template <class T, T nl>
+CCosa<T, nl> CSMatrix<T, nl>::operator()(uint x, uint y){
+	CCosa<T, nl> Cosa(this, x, y);
+	return Cosa;
+}
 
 template <class T, T nl>
 bool CSMatrix<T, nl>::findRight(CNode<T>**& p, uint x, uint y){
@@ -86,7 +121,7 @@ void CSMatrix<T, nl>::insertRight(CNode<T>* p, T val, uint x, uint y){
 template <class T, T nl>
 void CSMatrix<T, nl>::insert(T val, uint x, uint y){
 	CNode<T>* p = new CNode<T>(val, x, y);
-	//insertUp(p, val, x, y);
+	insertUp(p, val, x, y);
 	insertRight(p, val, x, y);
 	return;
 }
@@ -111,7 +146,9 @@ template <class T, T nl>
 void CSMatrix<T, nl>::eraseUp(uint x, uint y){
 	CNode<T>** temp, *temp2;
 	for(temp = &up[x]; *temp && (*temp)->y < y; temp = &(*temp)->next[0]);
-	
+	temp2 = *temp;
+	*temp = (*temp)->next[0];
+	temp2 = 0;
 }
 
 template <class T, T nl>
@@ -126,6 +163,7 @@ void CSMatrix<T, nl>::eraseRight(uint x, uint y){
 
 template <class T, T nl>
 void CSMatrix<T, nl>::erase(uint x, uint y){
+	eraseUp(x, y);
 	eraseRight(x, y);
 }
 
@@ -156,20 +194,24 @@ void CSMatrix<T, nl>::print(){
 
 int main(int argc, char *argv[]) {
 	CSMatrix<int, 0> m(6, 6);
+	int x;
 	/*for(int i = 0; i < 5; i++){
 		for (int j = 0; j < 6; j++){
 			m.insert(i+j, i, j);
 		}
 	}*/
-	m.set(5, 2, 3);
-	m.set(9, 3, 2);
-	m.set(7, 3, 2);
-	m.set(4, 3, 4);
-	m.set(8, 1, 3);
-	m.set(1, 4, 3);
-	m.set(3, 5, 3);
-	m.set(0, 3, 4);
-	m.set(0, 3, 2);
+	//m.set(5, 2, 3);
+	m(2, 3) = 5;
+	m(3, 2) = 9;
+	m(3, 2) = 7;
+	m(3, 4) = 4;
+	m(1, 3) = 8;
+	m(4, 3) = 1;
+	m(5, 3) = 1;
+	m(3, 4) = 0;
+	m(3, 2) = 0;
+	x = m(2, 3);
+	cout << x << endl;
 	m.print();
 	return 0;
 }
