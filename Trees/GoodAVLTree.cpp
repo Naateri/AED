@@ -121,14 +121,17 @@ void AVL<T,C>::RR(CNode<T>** p){
 	}
 	CNode<T>* temp, *father;
 	if (*it != m_root){ //si es que se tiene que balancear
-		temp = *(--it); //fuera de la raiz
-		it++; //regresando a la posicion
+		it--;
+		if (RL){
+			while( *p != (*it)->m_nodes[0]) it--; //busca en el camino hasta encontrar el padre de p
+			temp = *it;
+		} else 
+		//temp = *(--it); //fuera de la raiz
+		temp = *(it);
 	}
-	//CNode<T>* gfather = *(it++);
-	CNode<T>* gfather = *it;
-	father = (*it)->m_nodes[1];
+	CNode<T>* gfather = *p;
+	father = (*p)->m_nodes[1];
 	if (!findInPath(father) ) path.push_back(father);
-	//if (!father->m_nodes[0] && !father->m_nodes[1] ) RL = 1;
 	CNode<T> *bl = father->m_nodes[0];
 	father->m_nodes[0] = gfather;
 	gfather->m_nodes[1] = bl;
@@ -152,14 +155,17 @@ void AVL<T,C>::LL(CNode<T>** p){
 	}
 	CNode<T>* temp, *father;
 	if (*it != m_root){ //si es que se tiene que balancear
-		temp = *(--it); //fuera de la raiz
-		it++; //regresando a la posicion
+		--it;
+		if (LR){
+			while( *p != (*it)->m_nodes[1]) it--; //busca en el camino hasta encontrar el padre de p
+			temp = *it;
+		} else 
+		temp = (*it);
 	}
-	CNode<T>* gfather = *(it);
-	father = (*it)->m_nodes[0];
+	CNode<T>* gfather = *(p);
+	father = (*p)->m_nodes[0];
 	CNode<T> *br = father->m_nodes[1];
 	if (!findInPath(father) ) path.push_back(father);
-	//if ( !father->m_nodes[0] && !father->m_nodes[1] ) LR = 1;
 	father->m_nodes[1] = gfather;
 	gfather->m_nodes[0] = br;
 	if (m_root == gfather){
@@ -179,7 +185,6 @@ void AVL<T,C>::LR(CNode<T>** p){
 	if (!findInPath( (*p)->m_nodes[1] ) ) path.push_back((*p)->m_nodes[1]);
 	LL( &(*p)->m_nodes[1]);
 	RR(p);
-	
 }
 
 template <class T, class C>
@@ -191,9 +196,12 @@ void AVL<T,C>::RL(CNode<T>** p){
 
 template <class T, class C>
 CNode<T>** AVL<T,C>::Rep(CNode<T>** p){
-	for(p = &(*p)->m_nodes[0]; *p && (*p)->m_nodes[1]; p = &(*p)->m_nodes[1]){
+	for(p = &(*p)->m_nodes[0]; *p && (*p)->m_nodes[1]; p = &(*p)->m_nodes[1]){ //the university-one like
 		path.push_back(*p);
 	}
+	/*for(p = &(*p)->m_nodes[1]; *p && (*p)->m_nodes[0]; p = &(*p)->m_nodes[0]){ //VisuAlgo like
+		path.push_back(*p);
+	}*/
 	path.push_back(*p);
 	return p;
 }
@@ -224,8 +232,6 @@ void AVL<T,C>::updateDepth(){
 	bool balance = 0;
 	ushort lDepth, rDepth;
 	typename list<CNode<T>* >::reverse_iterator rit = path.rbegin();
-	/*cout << "LIST:\n";
-	printList<T>(path);*/
 	while(rit != path.rend() ){
 		if ( !(*rit)->m_nodes[0] && !(*rit)->m_nodes[1] ){
 			(*rit)->depth = 0;
@@ -241,7 +247,7 @@ void AVL<T,C>::updateDepth(){
 		if ((*rit)->height == 2){
 			p = &(*rit);
 			balance = 1;
-			if ( (*rit)->m_nodes[1]->height == -1){
+			if ( getHeight((*rit)->m_nodes[1]) == -1){
 				LR(p);
 			}
 			else{
@@ -250,7 +256,7 @@ void AVL<T,C>::updateDepth(){
 		} else if ((*rit)->height == -2){
 			p = &(*rit);
 			balance = 1;
-			if ( (*rit)->m_nodes[0]->height == 1){
+			if ( getHeight((*rit)->m_nodes[0]) == 1){
 				RL(p);
 			}
 			else{
@@ -308,7 +314,6 @@ bool AVL<T,C>::insert(T x){
 	*p = new CNode<T>(x);
 	path.push_back(*p);
 	updateDepth();
-	//printTree(m_root);
 	updateDepthR();
 	path.clear();
 	return 1;
@@ -348,42 +353,21 @@ void AVL<T,C>::inorder(CNode<T>* p){
 int main(int argc, char *argv[]) {
 	AVL<int, Menor <int> > Tree;
 	int xd;
-	Tree.insert(5); //Hasta remove 21 es un caso
+	/*Tree.insert(5); //Hasta remove 21 es un caso
 	Tree.insert(7); //Que funciona
 	Tree.insert(9);
 	Tree.printTree(Tree.m_root);
 	cout << endl;
 	Tree.insert(3);
 	Tree.printTree(Tree.m_root);
-	cin >> xd;
+	cout << endl;
 	Tree.insert(2);
-	Tree.printTree(Tree.m_root);
-	cout << endl;
-	cin >> xd;
 	Tree.insert(1);
-	Tree.printTree(Tree.m_root);
-	cin >> xd;
-	cout << endl;
 	Tree.insert(11);
-	Tree.printTree(Tree.m_root);
-	cin >> xd;
-	cout << endl;
 	Tree.insert(14);
-	Tree.printTree(Tree.m_root);
-	cin >> xd;
-	cout << endl;
 	Tree.insert(15);
-	Tree.printTree(Tree.m_root);
-	cin >> xd;
-	cout << endl;
 	Tree.insert(17);
-	Tree.printTree(Tree.m_root);
-	cin >> xd;
-	cout << endl;
 	Tree.insert(0);
-	Tree.printTree(Tree.m_root);
-	cin >> xd;
-	cout << endl;
 	Tree.insert(6);
 	Tree.insert(8);
 	Tree.insert(19);
@@ -392,10 +376,23 @@ int main(int argc, char *argv[]) {
 	Tree.insert(22);
 	Tree.insert(69);
 	Tree.insert(72);
+	Tree.printTree(Tree.m_root);
+	cin >> xd;
+	cout << endl;
 	Tree.remove(19);
 	Tree.remove(15);
 	Tree.remove(21);
-	Tree.printTree(Tree.m_root); //tested at https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
+	Tree.remove(7);
+	Tree.remove(6); //Hasta aqui bien
+	Tree.remove(3);
+	Tree.remove(11);
+	Tree.remove(69);
+	Tree.remove(22);
+	Tree.remove(72);
+	Tree.printTree(Tree.m_root);
+	cin >> xd;
+	cout << endl;
+	Tree.printTree(Tree.m_root); //tested at https://www.cs.usfca.edu/~galles/visualization/AVLtree.html step by step*/
 	/*Tree.insert(4); //RR base test
 	Tree.insert(5);
 	Tree.insert(6);*/
@@ -418,7 +415,12 @@ int main(int argc, char *argv[]) {
 	Tree.insert(5);
 	Tree.insert(6);
 	Tree.remove(3);
-	Tree.remove(8);
+	Tree.printTree(Tree.m_root);
+	cin >> xd;
+	Tree.remove(9); //normal
+	Tree.printTree(Tree.m_root);
+	cin >> xd;
+	Tree.remove(2);
 	Tree.printTree(Tree.m_root); //hasta aqui funciona*/
 	//cin >> xd;
 	/*Tree.insert(8); //Esto funca
