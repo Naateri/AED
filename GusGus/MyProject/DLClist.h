@@ -1,5 +1,31 @@
 #include <iostream>
-#include "DLClist.h"
+using namespace std;
+typedef unsigned int uint;
+
+template <class T>
+struct CNodeLL{
+	CNodeLL<T>* next;
+	CNodeLL<T>* prev;
+	T m_x;
+	CNodeLL(T x){
+		m_x = x;
+		next = prev = this;
+	}
+};
+
+template <class T>
+class DList{
+	CNodeLL<T>* head;
+	CNodeLL<T>* tail;
+	uint size = 0;
+public:
+	DList();
+	bool find(T x, CNodeLL<T>*& p);
+	bool insert(T x);
+	bool remove(T x);
+	void print();
+	void Josephus(int soldiers, int gap);
+};
 
 template <class T>
 DList<T>::DList(){
@@ -7,7 +33,7 @@ DList<T>::DList(){
 }
 
 template <class T>
-bool DList<T>::find(T x, CNode<T>*& p){
+bool DList<T>::find(T x, CNodeLL<T>*& p){
 	if (!head) return 0;
 	for (p = (head); ((p)->m_x) < ((p)->next->m_x) && (p)->m_x < x; p = (p)->next); //if prev node value < cur node value
 	return (p)->m_x == x;
@@ -16,12 +42,12 @@ bool DList<T>::find(T x, CNode<T>*& p){
 template <class T>
 bool DList<T>::insert(T x){
 	if(!head){
-		head = new CNode<T>(x);
+		head = new CNodeLL<T>(x);
 		tail = head;
 	} else {
-		CNode<T>* p;
+		CNodeLL<T>* p;
 		if(find(x,p)) return 0;
-		CNode<T>* newNode = new CNode<T>(x);
+		CNodeLL<T>* newNode = new CNodeLL<T>(x);
 		if (p == tail){ //insertion at the end
 			if (p->m_x < x){
 				newNode->next = head;
@@ -60,7 +86,7 @@ bool DList<T>::remove(T x){
 		head = tail = 0;
 		return 0;
 	}
-	CNode<T>* p;
+	CNodeLL<T>* p;
 	if(!find(x,p)) return 0;
 	if (p == head){
 		head = (p)->next;
@@ -83,7 +109,7 @@ template <class T>
 void DList<T>::print(){
 	if (!head) cout << endl;
 	else {
-		CNode<T>* temp;
+		CNodeLL<T>* temp;
 		for(temp = head; ((temp)->m_x) < ((temp)->next->m_x) ; temp = temp->next ){
 			cout << (temp)->m_x << " "; 
 		}
@@ -96,7 +122,7 @@ void DList<T>::Josephus(int soldiers, int gap){
 	for(int i = 0; i < soldiers; i++){
 		insert(i);
 	}
-	CNode<int>* temp = head;
+	CNodeLL<int>* temp = head;
 	int tmp;
 	while(size > 2){
 		for(int i = 0; i < gap-1; i++){
