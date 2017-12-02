@@ -44,10 +44,20 @@ void CGraph<N, E>::insertEdge(E edge, Node* a, Node* b, bool dir){
 template <class N, class E>
 void CGraph<N, E>::removeEdge(Node *a, Node *b, E edge){ 
 	typename list<Edge*>::iterator it = a->m_edges.begin();
-	for( ; it != a->m_edges.end() && (*it)->m_data != edge && (*it)->m_nodes[1] != b; ++it);
+	for( ; it != a->m_edges.end(); ++it){
+		if ((*it)->m_data == edge){
+			if ( ( (*it)->m_nodes[0] == a && (*it)->m_nodes[1] == b) || 
+				( (*it)->m_nodes[0] == b && (*it)->m_nodes[1] == a)) break;
+		}
+	}
 	a->m_edges.erase(it);
 	it = b->m_edges.begin();
-	for( ; it != b->m_edges.end() && (*it)->m_data != edge && (*it)->m_nodes[0] != a; ++it);
+	for( ; it != b->m_edges.end(); ++it){
+		if ((*it)->m_data == edge){
+			if ( ( (*it)->m_nodes[0] == a && (*it)->m_nodes[1] == b) || 
+				( (*it)->m_nodes[0] == b && (*it)->m_nodes[1] == a)) break;
+		}
+	}
 	b->m_edges.erase(it);
 	delete *it;
 }
@@ -143,4 +153,3 @@ uint CGraph<N, E>::Dijkstra(Node* start, Node* goal){
 	delete[] paths;
 	return res;
 }
-
