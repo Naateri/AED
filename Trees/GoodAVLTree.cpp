@@ -137,9 +137,7 @@ void AVL<T,C>::RR(CNode<T>** p){
 	gfather->m_nodes[1] = bl;
 	if (m_root == gfather) m_root = father;
 	else {
-		if (RL){
-			temp->m_nodes[0] = father;
-		} else if (LR && father->height == 1) temp->m_nodes[0] = father;
+		if (father->m_x < temp->m_x ) temp->m_nodes[0] = father;
 		else temp->m_nodes[1] = father;
 	}
 }
@@ -172,10 +170,7 @@ void AVL<T,C>::LL(CNode<T>** p){
 		m_root = father;
 	}
 	else {
-		if (LR) {
-			temp->m_nodes[1] = father;
-		}
-		else if (RL && father->height == -1) temp->m_nodes[1] = father;
+		if (father->m_x > temp->m_x) temp->m_nodes[1] = father;
 		else temp->m_nodes[0] = father;
 	}
 }
@@ -423,7 +418,7 @@ int main(int argc, char *argv[]) {
 	Tree.remove(2);
 	Tree.printTree(Tree.m_root); //hasta aqui funciona*/
 	//cin >> xd;
-	/*Tree.insert(8); //Esto funca
+	Tree.insert(8); //Esto funca
 	Tree.insert(9);
 	Tree.insert(10);
 	Tree.insert(15);
@@ -433,8 +428,8 @@ int main(int argc, char *argv[]) {
 	Tree.remove(2);
 	Tree.remove(5);
 	Tree.remove(10);
-	Tree.remove(8);*/
-	//Tree.printTree(Tree.m_root);
+	Tree.remove(8);
+	Tree.printTree(Tree.m_root);
 	return 0;
 }
 
