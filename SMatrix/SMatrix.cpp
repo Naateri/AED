@@ -64,6 +64,18 @@ public:
 	void insert(T val, uint x, uint y);
 	void modify(T val, uint x, uint y);
 	void erase(uint x, uint y);
+	void visitFirstColumn(){
+		CNode<T>* temp, *temp2;
+		for(temp = up[0]; temp; temp = (temp)->next[0]){
+			cout << temp->val << endl;
+		}
+	}
+	void visitFirstRow(){
+		CNode<T>* temp;
+		for(temp = right[0]; temp; temp = temp->next[1]){
+			cout << temp->val << endl;
+		}
+	}
 	T get(uint x, uint y);
 	void set(T val, uint x, uint y);
 	CCosa<T, nl> operator()(uint x, uint y);
@@ -212,7 +224,25 @@ int main(int argc, char *argv[]) {
 	m(3, 2) = 0;
 	x = m(2, 3);
 	cout << x << endl;
+	//m.print();
+	m(0,0) = 5;
+	m(0,1) = 8;
+	m(0,2) = 4;
+	m(0,4) = 6;
+	m(0,5) = 3;
+	
+	m(1,0) = 4;
+	m(2,0) = 3;
+	m(3,0) = 2;
+	m(4,0) = 1;
+	m(5,0) = 6;
 	m.print();
+	cout << "Visiting first row:\n";
+	//for(int i = 0; i < 6; i++){
+	m.visitFirstRow();
+	cout << "Visiting first column:\n";
+	m.visitFirstColumn();
+	//}*/
 	return 0;
 }
 
